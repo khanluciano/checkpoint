@@ -68,7 +68,6 @@
         .terminal-error { color: #f87171; }
         .terminal-stdout { color: #e2e8f0; }
 
-        /* Integrated Line Number Workspace Frame Container Layout */
         .editor-container {
             position: relative;
             flex: 1;
@@ -78,7 +77,6 @@
             display: flex;
         }
 
-        /* Gutter strip pane for line metrics */
         .line-numbers-gutter {
             width: 44px;
             height: 100%;
@@ -103,7 +101,6 @@
             height: 100%;
         }
 
-        /* Unified Typography rules to synchronize overlaid layouts concurrently */
         #code-editor, #editor-highlight {
             position: absolute;
             top: 0;
@@ -142,7 +139,6 @@
             pointer-events: none;
         }
 
-        /* Tokens Visual Highlighting Engine Rules */
         .token-keyword { color: #f43f5e; font-weight: 600; }
         .token-type { color: #38bdf8; }
         .token-string { color: #34d399; }
@@ -207,16 +203,9 @@
                     <input type="text" id="search-input" oninput="filterQuestions()" placeholder="Search questions..."
                         class="w-full bg-dark-800 border border-dark-700 rounded-lg py-2 pl-9 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-gopher-500">
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <select id="filter-difficulty" onchange="filterQuestions()"
-                        class="bg-dark-800 border border-dark-700 rounded-lg p-2 text-slate-300 focus:outline-none focus:border-gopher-500">
-                        <option value="all">All Difficulties</option>
-                        <option value="Easy">Easy</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Hard">Hard</option>
-                    </select>
+                <div class="text-xs">
                     <select id="filter-status" onchange="filterQuestions()"
-                        class="bg-dark-800 border border-dark-700 rounded-lg p-2 text-slate-300 focus:outline-none focus:border-gopher-500">
+                        class="w-full bg-dark-800 border border-dark-700 rounded-lg p-2 text-slate-300 focus:outline-none focus:border-gopher-500">
                         <option value="all">All Statuses</option>
                         <option value="Not Started">Not Started</option>
                         <option value="In Progress">In Progress</option>
@@ -224,7 +213,9 @@
                     </select>
                 </div>
             </div>
-            <div id="question-list" class="flex-1 overflow-y-auto divide-y divide-dark-800/50"></div>
+            
+            <div id="question-list" class="flex-1 overflow-y-auto space-y-1 p-2"></div>
+            
             <div
                 class="p-3 border-t border-dark-700 flex justify-between items-center text-xs text-slate-400 bg-dark-950/40">
                 <span>Total: 17 Challenges Ready</span>
@@ -235,9 +226,9 @@
 
             <section
                 class="w-full lg:w-1/2 flex flex-col border-b lg:border-b-0 lg:border-r border-dark-700 bg-dark-950 p-4 sm:p-6 overflow-y-auto min-h-[40vh] lg:min-h-0">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 id="question-title" class="text-xl sm:text-2xl font-bold text-white">Select a Question</h2>
-                    <span id="question-difficulty" class="px-2.5 py-1 rounded text-xs font-semibold"></span>
+                <div class="flex items-start justify-between mb-4">
+                    <h2 id="question-title" class="text-xl sm:text-2xl font-bold text-white pr-2">Select a Question</h2>
+                    <span id="question-difficulty" class="px-2.5 py-1 rounded text-xs font-semibold shrink-0"></span>
                 </div>
                 <div id="question-description"
                     class="text-slate-300 space-y-4 font-normal leading-relaxed text-sm sm:text-base whitespace-pre-wrap mb-6">
@@ -259,11 +250,18 @@
                 <div
                     class="flex items-center justify-between px-4 py-2 border-b border-dark-700 bg-dark-950/60 shrink-0">
                     <span class="text-xs font-semibold font-mono tracking-wider text-slate-400">MAIN.GO</span>
-                    <button onclick="runCode()" id="run-btn"
-                        class="bg-emerald-500 hover:bg-emerald-600 text-dark-950 font-bold text-xs px-4 py-1.5 rounded flex items-center space-x-1.5 transition-all shadow-md shadow-emerald-500/10">
-                        <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-                        <span>Run & Validate</span>
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="runCode()" id="run-btn"
+                            class="bg-emerald-500 hover:bg-emerald-600 text-dark-950 font-bold text-xs px-4 py-1.5 rounded flex items-center space-x-1.5 transition-all shadow-md shadow-emerald-500/10">
+                            <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                            <span>Run & Validate</span>
+                        </button>
+                        <button onclick="loadNextQuestion()" id="next-btn"
+                            class="bg-dark-800 hover:bg-dark-700 border border-dark-700 text-slate-200 font-semibold text-xs px-3 py-1.5 rounded flex items-center space-x-1 transition-all">
+                            <span>Next</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="editor-container">
@@ -428,9 +426,15 @@
 
         let currentQuestionId = 1;
         let progressState = JSON.parse(localStorage.getItem('gopherlab_progress')) || {};
+        
+        // Track accordion expanded states internally
+        let accordionState = {
+            'Easy': true,
+            'Medium': true,
+            'Hard': true
+        };
 
         window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
             renderQuestionList();
             loadQuestion(currentQuestionId);
             updateGlobalProgress();
@@ -462,7 +466,6 @@
                 "'": "'"
             };
 
-            // Lock scroll positions between the workspace inputs, highlights, and side-gutter
             editor.addEventListener('scroll', function() {
                 highlightBox.scrollTop = this.scrollTop;
                 highlightBox.scrollLeft = this.scrollLeft;
@@ -476,7 +479,6 @@
 
                 if (e.key === 'Tab') {
                     e.preventDefault();
-                    // execCommand keeps the browser's native tracking history intact
                     document.execCommand('insertText', false, "\t");
                     updateHighlighter();
                 }
@@ -484,10 +486,7 @@
                 if (pairs[e.key] !== undefined) {
                     e.preventDefault();
                     const closeChar = pairs[e.key];
-                    
-                    // Insert bracket/quote block as a single atomic step that Ctrl+Z can roll back
                     document.execCommand('insertText', false, e.key + closeChar);
-                    
                     this.selectionStart = this.selectionEnd = start + 1;
                     updateHighlighter();
                 }
@@ -510,14 +509,12 @@
             });
         }
 
-        // Token Isolation Syntax Highlighter & Dynamic Line Generator
         function updateHighlighter() {
             const editor = document.getElementById('code-editor');
             const target = document.getElementById('highlight-content');
             const gutter = document.getElementById('gutter-lines');
             let code = editor.value;
 
-            // Compute dynamic height markers inside side pane strip
             const lineCount = code.split('\n').length;
             let lineGutterHTML = '';
             for (let i = 1; i <= lineCount; i++) {
@@ -525,7 +522,6 @@
             }
             gutter.textContent = lineGutterHTML;
 
-            // Escape HTML characters safely
             code = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
             const savedTokens = [];
@@ -538,16 +534,13 @@
                 return placeholder;
             }
 
-            // Shield string templates and comments to prevent internal keyword evaluation clashes
             code = code.replace(/(\/\/.*)/g, (match) => shieldToken(match, 'token-comment'));
             code = code.replace(/(".*?"|`.*?`)/g, (match) => shieldToken(match, 'token-string'));
 
-            // Match pure keywords, types, and library symbols
             code = code.replace(/\b(package|import|func|return|type|struct|interface|for|if|else)\b/g, '<span class="token-keyword">$1</span>');
             code = code.replace(/\b(string|int|bool|error|float64)\b/g, '<span class="token-type">$1</span>');
             code = code.replace(/\b(append|len|make|fmt|Println|Printf)\b/g, '<span class="token-builtin">$1</span>');
 
-            // Restore hidden tokens
             for (let i = savedTokens.length - 1; i >= 0; i--) {
                 code = code.replace(savedTokens[i].placeholder, savedTokens[i].html);
             }
@@ -555,47 +548,102 @@
             target.innerHTML = code;
         }
 
+        function toggleAccordion(difficulty) {
+            accordionState[difficulty] = !accordionState[difficulty];
+            renderQuestionList();
+        }
+
+        // Tier Grouping Render Engine
         function renderQuestionList() {
             const container = document.getElementById('question-list');
             const searchVal = document.getElementById('search-input').value.toLowerCase();
-            const diffFilter = document.getElementById('filter-difficulty').value;
             const statusFilter = document.getElementById('filter-status').value;
 
             container.innerHTML = '';
 
-            questions.forEach(q => {
-                const status = progressState[q.id] || "Not Started";
+            const tiers = ['Easy', 'Medium', 'Hard'];
+            
+            tiers.forEach(tier => {
+                const tierQuestions = questions.filter(q => q.difficulty === tier);
+                
+                // Track stats inside header block
+                const tierTotal = tierQuestions.length;
+                const tierSolved = tierQuestions.filter(q => progressState[q.id] === "Solved").length;
 
-                if (searchVal && !q.title.toLowerCase().includes(searchVal)) return;
-                if (diffFilter !== 'all' && q.difficulty !== diffFilter) return;
-                if (statusFilter !== 'all' && status !== statusFilter) return;
+                // Build Category Wrapper
+                const section = document.createElement('div');
+                section.className = "mb-2 border border-dark-800 rounded-lg bg-dark-950/20 overflow-hidden";
 
-                let badgeColor = "bg-slate-800 text-slate-400";
-                if (status === "In Progress") badgeColor = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
-                if (status === "Solved") badgeColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                let diffHeaderColor = "text-emerald-400";
+                if (tier === "Medium") diffHeaderColor = "text-amber-400";
+                if (tier === "Hard") diffHeaderColor = "text-rose-400";
 
-                let diffColor = "text-emerald-400";
-                if (q.difficulty === "Medium") diffColor = "text-amber-400";
-                if (q.difficulty === "Hard") diffColor = "text-rose-400";
+                const isExpanded = accordionState[tier];
+                const chevronIcon = isExpanded ? 'chevron-down' : 'chevron-right';
 
-                const activeClass = q.id === currentQuestionId ? 'bg-dark-800 border-l-4 border-gopher-500' : 'hover:bg-dark-800/40';
-
-                const item = document.createElement('div');
-                item.className = `p-4 cursor-pointer transition-all ${activeClass}`;
-                item.onclick = () => {
-                    loadQuestion(q.id);
-                    toggleSidebar(false);
-                };
-                item.innerHTML = `
-                    <div class="flex items-start justify-between mb-1.5">
-                        <h4 class="font-medium text-sm text-slate-200 truncate pr-2">${q.id}. ${q.title}</h4>
-                        <span class="text-[10px] font-mono ${diffColor}">${q.difficulty}</span>
+                // Category Header Block
+                const header = document.createElement('div');
+                header.className = "flex items-center justify-between px-3 py-2.5 bg-dark-950/60 cursor-pointer select-none hover:bg-dark-800/50 transition-colors";
+                header.onclick = () => toggleAccordion(tier);
+                header.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="${chevronIcon}" class="w-4 h-4 text-slate-400"></i>
+                        <span class="font-bold text-xs uppercase tracking-wider ${diffHeaderColor}">${tier}</span>
                     </div>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-medium tracking-wide uppercase ${badgeColor}">${status}</span>
-                    </div>`;
-                container.appendChild(item);
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-dark-800 text-slate-400 font-semibold">${tierSolved}/${tierTotal}</span>
+                `;
+                section.appendChild(header);
+
+                // Challenge Items Wrapper Frame
+                const itemsContainer = document.createElement('div');
+                itemsContainer.className = isExpanded ? "divide-y divide-dark-800/40 border-t border-dark-800/40" : "hidden";
+
+                let visibleCount = 0;
+
+                tierQuestions.forEach(q => {
+                    const status = progressState[q.id] || "Not Started";
+
+                    if (searchVal && !q.title.toLowerCase().includes(searchVal)) return;
+                    if (statusFilter !== 'all' && status !== statusFilter) return;
+
+                    visibleCount++;
+
+                    let badgeColor = "bg-slate-800 text-slate-400";
+                    if (status === "In Progress") badgeColor = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    if (status === "Solved") badgeColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+
+                    const activeClass = q.id === currentQuestionId ? 'bg-dark-800/90 border-l-4 border-gopher-500 pl-3' : 'hover:bg-dark-800/30 pl-4';
+
+                    const item = document.createElement('div');
+                    item.className = `py-3 pr-4 cursor-pointer transition-all flex items-center justify-between ${activeClass}`;
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        loadQuestion(q.id);
+                        toggleSidebar(false);
+                    };
+                    item.innerHTML = `
+                        <div class="truncate pr-2">
+                            <h4 class="font-medium text-sm text-slate-200 truncate">${q.id}. ${q.title}</h4>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[9px] font-medium tracking-wide uppercase shrink-0 ${badgeColor}">${status}</span>
+                    `;
+                    itemsContainer.appendChild(item);
+                });
+
+                if (isExpanded) {
+                    if (visibleCount === 0) {
+                        const empty = document.createElement('div');
+                        empty.className = "p-3 text-xs text-slate-500 text-center italic";
+                        empty.innerText = "No matching challenges found.";
+                        itemsContainer.appendChild(empty);
+                    }
+                    section.appendChild(itemsContainer);
+                }
+
+                container.appendChild(section);
             });
+
+            lucide.createIcons();
         }
 
         function loadQuestion(id) {
@@ -605,7 +653,7 @@
 
             const diffBadge = document.getElementById('question-difficulty');
             diffBadge.innerText = q.difficulty;
-            diffBadge.className = "px-2.5 py-1 rounded text-xs font-semibold ";
+            diffBadge.className = "px-2.5 py-1 rounded text-xs font-semibold shrink-0 ";
             if (q.difficulty === "Easy") diffBadge.className += "bg-emerald-500/10 text-emerald-400";
             if (q.difficulty === "Medium") diffBadge.className += "bg-amber-500/10 text-amber-400";
             if (q.difficulty === "Hard") diffBadge.className += "bg-rose-500/10 text-rose-400";
@@ -620,9 +668,29 @@
                 progressState[id] = "In Progress";
                 saveProgress();
             }
+            
+            // Sync Next button rendering context limits
+            const nextBtn = document.getElementById('next-btn');
+            if (id === questions[questions.length - 1].id) {
+                nextBtn.disabled = true;
+                nextBtn.classList.add('opacity-40', 'cursor-not-allowed');
+            } else {
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+            }
+
             renderQuestionList();
             updateHighlighter();
             document.getElementById('expected-output-box').classList.add('hidden');
+        }
+
+        // Sequential Challenge Navigation Action
+        function loadNextQuestion() {
+            const currentIndex = questions.findIndex(q => q.id === currentQuestionId);
+            if (currentIndex !== -1 && currentIndex < questions.length - 1) {
+                const nextQuestion = questions[currentIndex + 1];
+                loadQuestion(nextQuestion.id);
+            }
         }
 
         document.getElementById('code-editor').addEventListener('input', (e) => {
