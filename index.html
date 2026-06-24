@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GopherLab - Go Interview & Coding Practice</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: {
+                            950: '#030712',
+                            900: '#090d16',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151',
+                            500: '#4b5563',
+                        },
+                        gopher: {
+                            400: '#38BDF8',
+                            500: '#00ADD8',
+                            600: '#0284c7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+        .terminal-info { color: #38bdf8; }
+        .terminal-success { color: #34d399; }
+        .terminal-error { color: #f87171; }
+        .terminal-stdout { color: #e2e8f0; }
+    </style>
+</head>
+<body class="bg-dark-950 text-slate-100 font-sans h-full flex flex-col overflow-hidden select-none">
+
+    <header class="h-16 border-b border-dark-700 bg-dark-900/90 backdrop-blur-md px-6 flex items-center justify-between z-20 shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="bg-gopher-500 text-dark-950 p-2 rounded-lg font-bold flex items-center justify-center shadow-lg shadow-gopher-500/10">
+                <i data-lucide="code-2" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-gopher-400 to-emerald-400 bg-clip-text text-transparent">GopherLab</h1>
+                <p class="text-xs text-slate-400">Go Interview & Coding Playground</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-3 bg-dark-800/80 border border-dark-700 rounded-full px-4 py-1.5 text-sm">
+                <span class="text-slate-400">Progress:</span>
+                <div class="w-32 bg-dark-700 h-2.5 rounded-full overflow-hidden">
+                    <div id="global-progress-bar" class="bg-gradient-to-r from-gopher-500 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <span id="global-progress-text" class="font-semibold text-emerald-400">0/20 Solved</span>
+            </div>
+            <button onclick="resetAllProgress()" class="text-slate-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-dark-800 flex items-center space-x-2">
+                <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                <span class="text-xs font-medium">Reset Progress</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden relative">
+        <aside id="sidebar" class="w-80 border-r border-dark-700 bg-dark-900 flex flex-col h-full z-10">
+            <div class="p-4 border-b border-dark-700 space-y-3 bg-dark-950/40">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                    <input type="text" id="search-input" oninput="filterQuestions()" placeholder="Search questions..." class="w-full bg-dark-800 border border-dark-700 rounded-lg py-2 pl-9 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-gopher-500">
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <select id="filter-difficulty" onchange="filterQuestions()" class="bg-dark-800 border border-dark-700 rounded-lg p-2 text-slate-300">
+                        <option value="all">All Difficulties</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                    <select id="filter-status" onchange="filterQuestions()" class="bg-dark-800 border border-dark-700 rounded-lg p-2 text-slate-300">
+                        <option value="all">All Statuses</option>
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Solved">Solved</option>
+                    </select>
+                </div>
+            </div>
+            <div id="question-list" class="flex-1 overflow-y-auto divide-y divide-dark-800/50"></div>
+            <div class="p-3 border-t border-dark-700 flex justify-between items-center text-xs text-slate-400">
+                <span>Total: 20 Questions</span>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            <section class="w-full lg:w-1/2 flex flex-col border-b lg:border-b-0 lg:border-r border-dark-700 bg-dark-950 overflow-y-auto p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 id="question-title" class="text-2xl font-bold text-white">Select a Question</h2>
+                    <span id="question-difficulty" class="px-2.5 py-1 rounded text-xs font-semibold"></span>
+                </div>
+                <div id="question-description" class="text-slate-300 space-y-4 font-normal leading-relaxed whitespace-pre-wrap mb-6"></div>
+                
+                <div class="mt-auto pt-6 border-t border-dark-800">
+                    <button onclick="toggleSolution()" class="text-sm font-medium text-gopher-400 hover:text-gopher-500 flex items-center space-x-1">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                        <span>Toggle Expected Output / Guide</span>
+                    </button>
+                    <pre id="expected-output-box" class="hidden mt-3 p-4 bg-dark-900 border border-dark-700 rounded-lg font-mono text-xs text-slate-300 overflow-x-auto"></pre>
+                </div>
+            </section>
+
+            <section class="w-full lg:w-1/2 flex flex-col bg-dark-900 overflow-hidden">
+                <div class="flex items-center justify-between px-4 py-2 border-b border-dark-700 bg-dark-950/60">
+                    <span class="text-xs font-semibold font-mono tracking-wider text-slate-400">MAIN.GO</span>
+                    <button onclick="runCode()" id="run-btn" class="bg-emerald-500 hover:bg-emerald-600 text-dark-950 font-bold text-xs px-4 py-1.5 rounded flex items-center space-x-1.5 transition-all shadow-md shadow-emerald-500/10">
+                        <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                        <span>Run & Validate</span>
+                    </button>
+                </div>
+                
+                <textarea id="code-editor" class="flex-1 w-full bg-dark-900 text-slate-200 font-mono text-sm p-4 focus:outline-none resize-none leading-relaxed border-b border-dark-700" spellcheck="false"></textarea>
+                
+                <div class="h-48 bg-dark-950 flex flex-col overflow-hidden">
+                    <div class="px-4 py-1.5 border-b border-dark-800 bg-dark-900/40 flex items-center text-xs text-slate-400 font-medium font-mono">CONSOLE OUTPUT</div>
+                    <div id="console-logs" class="flex-1 p-4 font-mono text-xs overflow-y-auto space-y-1 select-text">
+                        <span class="text-slate-500">Console ready. Select a challenge to begin coding.</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Core Questions Array Database Storage Block
+        const questions = [
+            {
+                id: 1,
+                title: "ByeBeFirst",
+                difficulty: "Easy",
+                description: "Write a function called ByeBeFirst that takes a slice of strings and returns a new slice of strings with the first element moved to the end of the slice.\n\nIf the slice is empty, return an empty slice.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ByeBeFirst(words []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ByeBeFirst([]string{\"Hello\", \"World\", \"!\"}))\n\tfmt.Println(ByeBeFirst([]string{}))\n}",
+                expectedOutput: "[World ! Hello]\n[]\n"
+            },
+            {
+                id: 2,
+                title: "GetAlpha",
+                difficulty: "Medium",
+                description: "Write a function GetAlpha that takes a string and returns a new string containing only its alphabetical characters (a-z and A-Z).\n\nIf the string contains no alphabetical characters, return an empty string.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc GetAlpha(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(GetAlpha(\"Hello World!\"))\n\tfmt.Println(GetAlpha(\"12345\"))\n}",
+                expectedOutput: "HelloWorld\n\n"
+            },
+            {
+                id: 3,
+                title: "HalfSlice",
+                difficulty: "Easy",
+                description: "Write a function HalfSlice that takes a slice of integers and returns a new slice containing the first half of the elements.\n\nIf the number of elements is odd, round up the number of elements to include in the first half.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc HalfSlice(slice []int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(HalfSlice([]int{1, 2, 3, 4, 5}))\n\tfmt.Println(HalfSlice([]int{1, 2, 3, 4}))\n}",
+                expectedOutput: "[1 2 3]\n[1 2]\n"
+            },
+            {
+                id: 4,
+                title: "IsSameString",
+                difficulty: "Easy",
+                description: "Write a function IsSameString that takes two strings and returns true if they are identical, and false otherwise.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc IsSameString(s1, s2 string) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(IsSameString(\"Hello\", \"Hello\"))\n\tfmt.Println(IsSameString(\"Hello\", \"world\"))\n}",
+                expectedOutput: "true\nfalse\n"
+            },
+            {
+                id: 5,
+                title: "IsCapitalized",
+                difficulty: "Medium",
+                description: "Write a function IsCapitalized that takes a string and returns true if the first letter of each word is capitalized. A word is defined as a sequence of alphanumeric characters separated by spaces.\n\nIf the string is empty, return false.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc IsCapitalized(s string) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(IsCapitalized(\"Hello World\"))\n\tfmt.Println(IsCapitalized(\"hello world\"))\n\tfmt.Println(IsCapitalized(\"\"))\n}",
+                expectedOutput: "true\nfalse\nfalse\n"
+            },
+            {
+                id: 6,
+                title: "ListRemoveIf",
+                difficulty: "Hard",
+                description: "Write a function ListRemoveIf that removes all elements from a linked list that are equal to a given value data_ref.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\ntype Node struct {\n\tData interface{}\n\tNext *Node\n}\n\ntype List struct {\n\tHead *Node\n}\n\nfunc ListRemoveIf(l *List, data_ref interface{}) {\n\t// Your code here\n}\n\nfunc main() {\n\tl := &List{}\n\tl.Head = &Node{Data: 1, Next: &Node{Data: 2, Next: &Node{Data: 1, Next: nil}}}\n\tListRemoveIf(l, 1)\n\tcurr := l.Head\n\tfor curr != nil {\n\t\tfmt.Printf(\"%v \", curr.Data)\n\t\tcurr = curr.Next\n\t}\n\tfmt.Println()\n}",
+                expectedOutput: "2 \n"
+            },
+            {
+                id: 7,
+                title: "QuarterAYear",
+                difficulty: "Easy",
+                description: "Write a function QuarterAYear that takes an integer representing a month (1-12) and returns another integer representing which quarter of the year that month belongs to.\n\nJanuary to March: Quarter 1\nApril to June: Quarter 2\nJuly to September: Quarter 3\nOctober to December: Quarter 4\n\nIf the month is invalid (less than 1 or greater than 12), return -1.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc QuarterAYear(month int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(QuarterAYear(2))\n\tfmt.Println(QuarterAYear(15))\n}",
+                expectedOutput: "1\n-1\n"
+            },
+            {
+                id: 8,
+                title: "NotDecimal",
+                difficulty: "Medium",
+                description: "Write a function NotDecimal that takes a string representing a number and returns a string with the decimal point removed. If the input string contains non-numeric characters (except for one optional decimal point and a leading sign), or if there is no decimal point, return the original string.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc NotDecimal(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(NotDecimal(\"0.1\"))\n\tfmt.Println(NotDecimal(\"174.2\"))\n\tfmt.Println(NotDecimal(\"12.5a\"))\n}",
+                expectedOutput: "01\n1742\n12.5a\n"
+            },
+            {
+                id: 9,
+                title: "ReduceInt",
+                difficulty: "Medium",
+                description: "Write a function ReduceInt that receives a slice of integers and a function as arguments. It applies the function to each element of the slice cumulatively to reduce the slice to a single integer.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReduceInt(a []int, f func(int, int) int) {\n\t// Your code here\n}\n\nfunc main() {\n\tmul := func(acc int, cur int) int { return acc * cur }\n\tsum := func(acc int, cur int) int { return acc + cur }\n\tdiv := func(acc int, cur int) int { return acc / cur }\n\tas := []int{500, 2}\n\tReduceInt(as, mul)\n\tReduceInt(as, sum)\n\tReduceInt(as, div)\n}",
+                expectedOutput: "1000\n502\n250\n"
+            },
+            {
+                id: 10,
+                title: "RemoveDuplicate",
+                difficulty: "Easy",
+                description: "Write a function RemoveDuplicate that takes a slice of integers and returns a new slice with all duplicate values removed, keeping only the first occurrence of each element.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc RemoveDuplicate(slice []int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(RemoveDuplicate([]int{1, 2, 2, 3, 4, 4, 5}))\n}",
+                expectedOutput: "[1 2 3 4 5]\n"
+            },
+            {
+                id: 11,
+                title: "ReverseSecondHalf",
+                difficulty: "Medium",
+                description: "Write a function ReverseSecondHalf that takes a slice of strings and returns a new slice where the second half of the elements are reversed.\n\nIf the number of elements is odd, the middle element should remain part of the first half and should not be reversed.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReverseSecondHalf(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseSecondHalf([]string{\"a\", \"b\", \"c\", \"d\"}))\n\tfmt.Println(ReverseSecondHalf([]string{\"1\", \"2\", \"3\", \"4\", \"5\"}))\n}",
+                expectedOutput: "[a b d c]\n[1 2 3 5 4]\n"
+            },
+            {
+                id: 12,
+                title: "SplitWhiteSpaces",
+                difficulty: "Medium",
+                description: "Write a function SplitWhiteSpaces that separates the words of a string and returns them in a slice of strings. The separators are spaces, tabs, and newlines.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc SplitWhiteSpaces(s string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Printf(\"%#v\\n\", SplitWhiteSpaces(\"Hello World this is a test\"))\n}",
+                expectedOutput: "[]string{\"Hello\", \"World\", \"this\", \"is\", \"a\", \"test\"}\n"
+            },
+            {
+                id: 13,
+                title: "StringToBool",
+                difficulty: "Easy",
+                description: "Write a function StringToBool that takes a string and converts it into a boolean value.\n\nIt returns true if the string is \"True\", \"true\", \"T\", or \"1\". It returns false for any other input.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc StringToBool(s string) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(StringToBool(\"True\"))\n\tfmt.Println(StringToBool(\"false\"))\n}",
+                expectedOutput: "true\nfalse\n"
+            },
+            {
+                id: 14,
+                title: "Swap",
+                difficulty: "Easy",
+                description: "Write a function Swap that takes two pointers to integers (*int) and swaps their values.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc Swap(a *int, b *int) {\n\t// Your code here\n}\n\nfunc main() {\n\ta := 1\n\tb := 2\n\tSwap(&a, &b)\n\tfmt.Println(a)\n\tfmt.Println(b)\n}",
+                expectedOutput: "2\n1\n"
+            },
+            {
+                id: 15,
+                title: "SwapFirst",
+                difficulty: "Easy",
+                description: "Write a function SwapFirst that takes a slice of integers and swaps the first two elements.\n\nIf the slice has fewer than 2 elements, return the slice unchanged.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc SwapFirst(slice []int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SwapFirst([]int{1, 2, 3}))\n\tfmt.Println(SwapFirst([]int{1}))\n}",
+                expectedOutput: "[2 1 3]\n[1]\n"
+            },
+            {
+                id: 16,
+                title: "SwapLast",
+                difficulty: "Easy",
+                description: "Write a function SwapLast that takes a slice of integers and swaps the last two elements.\n\nIf the slice has fewer than 2 elements, return the slice unchanged.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc SwapLast(slice []int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SwapLast([]int{1, 2, 3}))\n\tfmt.Println(SwapLast([]int{1}))\n}",
+                expectedOutput: "[1 3 2]\n[1]\n"
+            },
+            {
+                id: 17,
+                title: "StringToIntSlice",
+                difficulty: "Medium",
+                description: "Write a function StringToIntSlice that takes a string of digits (e.g., \"12345\") and returns a slice of integers containing each single digit.\n\nIf the string is empty or contains non-digit characters, return a nil slice.",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc StringToIntSlice(s string) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(StringToIntSlice(\"12345\"))\n\tfmt.Println(StringToIntSlice(\"12a45\"))\n}",
+                expectedOutput: "[1 2 3 4 5]\n[]\n"
+            },
+            { id: 18, title: "Future Challenge 18", difficulty: "Easy", description: "Placeholder Slot 18", starterCode: "package main\n\nfunc main() {}", expectedOutput: "" },
+            { id: 19, title: "Future Challenge 19", difficulty: "Medium", description: "Placeholder Slot 19", starterCode: "package main\n\nfunc main() {}", expectedOutput: "" },
+            { id: 20, title: "Future Challenge 20", difficulty: "Hard", description: "Placeholder Slot 20", starterCode: "package main\n\nfunc main() {}", expectedOutput: "" }
+        ];
+
+        let currentQuestionId = 1;
+        let progressState = JSON.parse(localStorage.getItem('gopherlab_progress')) || {};
+
+        // App Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderQuestionList();
+            loadQuestion(currentQuestionId);
+            updateGlobalProgress();
+        });
+
+        function renderQuestionList() {
+            const container = document.getElementById('question-list');
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            const diffFilter = document.getElementById('filter-difficulty').value;
+            const statusFilter = document.getElementById('filter-status').value;
+            
+            container.innerHTML = '';
+            
+            questions.forEach(q => {
+                const status = progressState[q.id] || "Not Started";
+                
+                // Real-time filtering matching logic
+                if (searchVal && !q.title.toLowerCase().includes(searchVal)) return;
+                if (diffFilter !== 'all' && q.difficulty !== diffFilter) return;
+                if (statusFilter !== 'all' && status !== statusFilter) return;
+
+                let badgeColor = "bg-slate-800 text-slate-400";
+                if(status === "In Progress") badgeColor = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                if(status === "Solved") badgeColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                
+                let diffColor = "text-emerald-400";
+                if(q.difficulty === "Medium") diffColor = "text-amber-400";
+                if(q.difficulty === "Hard") diffColor = "text-rose-400";
+                
+                const activeClass = q.id === currentQuestionId ? 'bg-dark-800 border-l-4 border-gopher-500' : 'hover:bg-dark-800/40';
+                
+                const item = document.createElement('div');
+                item.className = `p-4 cursor-pointer transition-all ${activeClass}`;
+                item.onclick = () => loadQuestion(q.id);
+                item.innerHTML = `
+                    <div class="flex items-start justify-between mb-1.5">
+                        <h4 class="font-medium text-sm text-slate-200 truncate pr-2">${q.id}. ${q.title}</h4>
+                        <span class="text-[10px] font-mono ${diffColor}">${q.difficulty}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-medium tracking-wide uppercase ${badgeColor}">${status}</span>
+                    </div>`;
+                container.appendChild(item);
+            });
+        }
+
+        function loadQuestion(id) {
+            currentQuestionId = id;
+            const q = questions.find(item => item.id === id);
+            document.getElementById('question-title').innerText = q.title;
+            
+            const diffBadge = document.getElementById('question-difficulty');
+            diffBadge.innerText = q.difficulty;
+            diffBadge.className = "px-2.5 py-1 rounded text-xs font-semibold ";
+            if(q.difficulty === "Easy") diffBadge.className += "bg-emerald-500/10 text-emerald-400";
+            if(q.difficulty === "Medium") diffBadge.className += "bg-amber-500/10 text-amber-400";
+            if(q.difficulty === "Hard") diffBadge.className += "bg-rose-500/10 text-rose-400";
+            
+            document.getElementById('question-description').innerText = q.description;
+            document.getElementById('expected-output-box').innerText = q.expectedOutput || "No specific verification string requested.";
+            
+            // Local Storage Draft Recall Logic
+            const savedDraft = localStorage.getItem(`gopherlab_draft_${id}`);
+            document.getElementById('code-editor').value = savedDraft ? savedDraft : q.starterCode;
+            
+            if(!progressState[id]) {
+                progressState[id] = "In Progress";
+                saveProgress();
+            }
+            renderQuestionList();
+            document.getElementById('expected-output-box').classList.add('hidden');
+        }
+
+        // Intercept Text Area state changes to backup drafts
+        document.getElementById('code-editor').addEventListener('input', (e) => {
+            localStorage.setItem(`gopherlab_draft_${currentQuestionId}`, e.target.value);
+        });
+
+        function toggleSolution() {
+            const box = document.getElementById('expected-output-box');
+            box.classList.toggle('hidden');
+        }
+
+        function filterQuestions() {
+            renderQuestionList();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('gopherlab_progress', JSON.stringify(progressState));
+            updateGlobalProgress();
+        }
+
+        function updateGlobalProgress() {
+            const total = questions.filter(q => q.id <= 17).length; // Real baseline challenges count
+            const solved = Object.values(progressState).filter(status => status === "Solved").length;
+            const percentage = total > 0 ? (solved / total) * 100 : 0;
+            
+            document.getElementById('global-progress-bar').style.width = `${percentage}%`;
+            document.getElementById('global-progress-text').innerText = `${solved}/${total} Solved`;
+        }
+
+        function resetAllProgress() {
+            if(confirm("Are you sure you want to clear your code drafts and reset all challenge metrics?")) {
+                localStorage.clear();
+                progressState = {};
+                currentQuestionId = 1;
+                renderQuestionList();
+                loadQuestion(currentQuestionId);
+                updateGlobalProgress();
+            }
+        }
+
+        // Live Go Playground integration logic panel proxy handler
+        async function runCode() {
+            const consoleBox = document.getElementById('console-logs');
+            const runBtn = document.getElementById('run-btn');
+            const code = document.getElementById('code-editor').value;
+            const q = questions.find(item => item.id === currentQuestionId);
+            
+            consoleBox.innerHTML = '<span class="terminal-info">Compiling program script and connecting to Go Sandbox...</span>';
+            runBtn.disabled = true;
+            
+            try {
+                // Connecting directly via the official multi-origin Go play interface endpoint proxy
+                const response = await fetch('https://play.golang.org/compile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ version: '2', body: code })
+                });
+                
+                if (!response.ok) throw new Error('Sandbox request timeout or server unavailable.');
+                
+                const data = await response.json();
+                consoleBox.innerHTML = '';
+                
+                if (data.Errors) {
+                    const errorSpan = document.createElement('span');
+                    errorSpan.className = 'terminal-error';
+                    errorSpan.innerText = data.Errors;
+                    consoleBox.appendChild(errorSpan);
+                } else if (data.Events) {
+                    let fullOutput = "";
+                    data.Events.forEach(evt => {
+                        fullOutput += evt.Message + "\n";
+                        const outSpan = document.createElement('span');
+                        outSpan.className = 'terminal-stdout';
+                        outSpan.innerText = evt.Message;
+                        consoleBox.appendChild(outSpan);
+                        consoleBox.appendChild(document.createElement('br'));
+                    });
+
+                    // Verification Matching Logic Engine
+                    if (q && q.expectedOutput && fullOutput.trim() === q.expectedOutput.trim()) {
+                        const successSpan = document.createElement('span');
+                        successSpan.className = 'terminal-success font-bold';
+                        successSpan.innerText = '\n✓ Verification Passed! All standard conditions verified.';
+                        consoleBox.appendChild(successSpan);
+                        
+                        progressState[currentQuestionId] = "Solved";
+                        saveProgress();
+                        renderQuestionList();
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                    } else if (q && q.expectedOutput) {
+                        const warnSpan = document.createElement('span');
+                        warnSpan.className = 'text-amber-400 font-medium';
+                        warnSpan.innerText = `\n⚠ Output variant noted. Check standard requirement schema layout.`;
+                        consoleBox.appendChild(warnSpan);
+                    }
+                }
+            } catch (err) {
+                consoleBox.innerHTML = `<span class="terminal-error">Runtime Platform Connection Error: ${err.message}</span>`;
+            } finally {
+                runBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
+
+```
