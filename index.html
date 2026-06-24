@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luciano - Go Interview & Coding Practice</title>
+    <title>GopherLab - Go Interview & Coding Practice</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -160,18 +160,12 @@
             <div class="flex items-center space-x-2">
                 <h1
                     class="text-md sm:text-lg font-bold tracking-tight bg-gradient-to-r from-gopher-400 to-emerald-400 bg-clip-text text-transparent">
-                    Luciano</h1>
+                    GopherLab</h1>
                 <p class="text-[10px] sm:text-xs text-slate-400 hidden md:inline-block">| Playground</p>
             </div>
         </div>
 
-        <div class="flex items-center space-x-2 sm:space-x-4">
-            <div id="traffic-pill" class="flex items-center space-x-1.5 bg-dark-950 border border-dark-700 rounded-full px-2.5 py-1 text-[11px] font-mono font-medium text-slate-400">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-500 animate-pulse" id="traffic-dot"></span>
-                <span>Live:</span>
-                <span id="traffic-stats" class="text-gopher-400 font-bold">-- / --</span>
-            </div>
-
+        <div class="flex items-center space-x-3 sm:space-x-6">
             <div
                 class="flex items-center space-x-2 sm:space-x-3 bg-dark-800/80 border border-dark-700 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm">
                 <span class="text-slate-400 hidden xs:inline">Progress:</span>
@@ -433,6 +427,7 @@
         let currentQuestionId = 1;
         let progressState = JSON.parse(localStorage.getItem('gopherlab_progress')) || {};
         
+        // Track accordion expanded states internally
         let accordionState = {
             'Easy': true,
             'Medium': true,
@@ -444,57 +439,7 @@
             loadQuestion(currentQuestionId);
             updateGlobalProgress();
             setupCodeEditorFeatures();
-            initTrafficTracking(); // Real-time analytical listener setup
         });
-
-        // Unique Fingerprint Device Registration ID setup helper 
-        function getDeviceFingerprint() {
-            let id = localStorage.getItem('luciano_device_uid');
-            if (!id) {
-                id = 'dev_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-                localStorage.setItem('luciano_device_uid', id);
-            }
-            return id;
-        }
-
-        // Live WebSocket Pipeline connection sequence
-        function initTrafficTracking() {
-            const statsText = document.getElementById('traffic-stats');
-            const statusDot = document.getElementById('traffic-dot');
-            const uid = getDeviceFingerprint();
-
-            // Attempts connecting to the server address. Falls back safely if local server is down.
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const host = window.location.host || 'localhost:8080';
-            const wsUrl = `${protocol}//${host}/ws?uid=${uid}`;
-
-            let socket;
-            try {
-                socket = new WebSocket(wsUrl);
-            } catch (err) {
-                return;
-            }
-
-            socket.onopen = () => {
-                statusDot.classList.replace('bg-slate-500', 'bg-emerald-500');
-            };
-
-            socket.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data && data.active !== undefined && data.total !== undefined) {
-                        statsText.innerText = `${data.active} / ${data.total}`;
-                    }
-                } catch(e) {}
-            };
-
-            socket.onclose = () => {
-                statusDot.classList.replace('bg-emerald-500', 'bg-slate-500');
-                statsText.innerText = "-- / --";
-                // Exponential reconnect sequence strategy
-                setTimeout(initTrafficTracking, 5000);
-            };
-        }
 
         function toggleSidebar(open) {
             const sidebar = document.getElementById('sidebar');
@@ -608,6 +553,7 @@
             renderQuestionList();
         }
 
+        // Tier Grouping Render Engine
         function renderQuestionList() {
             const container = document.getElementById('question-list');
             const searchVal = document.getElementById('search-input').value.toLowerCase();
@@ -619,9 +565,12 @@
             
             tiers.forEach(tier => {
                 const tierQuestions = questions.filter(q => q.difficulty === tier);
+                
+                // Track stats inside header block
                 const tierTotal = tierQuestions.length;
                 const tierSolved = tierQuestions.filter(q => progressState[q.id] === "Solved").length;
 
+                // Build Category Wrapper
                 const section = document.createElement('div');
                 section.className = "mb-2 border border-dark-800 rounded-lg bg-dark-950/20 overflow-hidden";
 
@@ -632,6 +581,7 @@
                 const isExpanded = accordionState[tier];
                 const chevronIcon = isExpanded ? 'chevron-down' : 'chevron-right';
 
+                // Category Header Block
                 const header = document.createElement('div');
                 header.className = "flex items-center justify-between px-3 py-2.5 bg-dark-950/60 cursor-pointer select-none hover:bg-dark-800/50 transition-colors";
                 header.onclick = () => toggleAccordion(tier);
@@ -644,6 +594,7 @@
                 `;
                 section.appendChild(header);
 
+                // Challenge Items Wrapper Frame
                 const itemsContainer = document.createElement('div');
                 itemsContainer.className = isExpanded ? "divide-y divide-dark-800/40 border-t border-dark-800/40" : "hidden";
 
@@ -718,6 +669,7 @@
                 saveProgress();
             }
             
+            // Sync Next button rendering context limits
             const nextBtn = document.getElementById('next-btn');
             if (id === questions[questions.length - 1].id) {
                 nextBtn.disabled = true;
@@ -732,6 +684,7 @@
             document.getElementById('expected-output-box').classList.add('hidden');
         }
 
+        // Sequential Challenge Navigation Action
         function loadNextQuestion() {
             const currentIndex = questions.findIndex(q => q.id === currentQuestionId);
             if (currentIndex !== -1 && currentIndex < questions.length - 1) {
