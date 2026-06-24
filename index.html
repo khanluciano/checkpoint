@@ -507,7 +507,7 @@
                 title: "ReverseSecondHalf",
                 difficulty: "Medium",
                 description: "Write a function ReverseSecondHalf that takes a slice of strings and returns a new slice where the second half of the elements are reversed.\n\nIf the number of elements is odd, the middle element should remain part of the first half and should not be reversed.",
-                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReverseSecondHalf(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseSecondHalf([]string(\"a\", \"b\", \"c\", \"d\")))\n\tfmt.Println(ReverseSecondHalf([]string(\"1\", \"2\", \"3\", \"4\", \"5\")))\n}",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReverseSecondHalf(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseSecondHalf([]string{\"a\", \"b\", \"c\", \"d\"}))\n\tfmt.Println(ReverseSecondHalf([]string{\"1\", \"2\", \"3\", \"4\", \"5\"}))\n}",
                 expectedOutput: "[a b d c]\n[1 2 3 5 4]\n"
             },
             {
