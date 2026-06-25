@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luciano - Go Interview & Coding Practice</title>
+    <title>GopherLab - Go Interview & Coding Practice</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,10 +63,21 @@
             background: #374151;
         }
 
-        .terminal-info { color: #38bdf8; }
-        .terminal-success { color: #34d399; }
-        .terminal-error { color: #f87171; }
-        .terminal-stdout { color: #e2e8f0; }
+        .terminal-info {
+            color: #38bdf8;
+        }
+
+        .terminal-success {
+            color: #34d399;
+        }
+
+        .terminal-error {
+            color: #f87171;
+        }
+
+        .terminal-stdout {
+            color: #e2e8f0;
+        }
 
         .editor-container {
             position: relative;
@@ -101,7 +112,8 @@
             height: 100%;
         }
 
-        #code-editor, #editor-highlight {
+        #code-editor,
+        #editor-highlight {
             position: absolute;
             top: 0;
             left: 0;
@@ -139,11 +151,27 @@
             pointer-events: none;
         }
 
-        .token-keyword { color: #f43f5e; font-weight: 600; }
-        .token-type { color: #38bdf8; }
-        .token-string { color: #34d399; }
-        .token-comment { color: #64748b; font-style: italic; }
-        .token-builtin { color: #fbbf24; }
+        .token-keyword {
+            color: #f43f5e;
+            font-weight: 600;
+        }
+
+        .token-type {
+            color: #38bdf8;
+        }
+
+        .token-string {
+            color: #34d399;
+        }
+
+        .token-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .token-builtin {
+            color: #fbbf24;
+        }
     </style>
 </head>
 
@@ -160,22 +188,29 @@
             <div class="flex items-center space-x-2">
                 <h1
                     class="text-md sm:text-lg font-bold tracking-tight bg-gradient-to-r from-gopher-400 to-emerald-400 bg-clip-text text-transparent">
-                    Luciano</h1>
+                    GopherLab</h1>
                 <p class="text-[10px] sm:text-xs text-slate-400 hidden md:inline-block">| Playground</p>
             </div>
         </div>
 
-        <div class="flex items-center space-x-3 sm:space-x-6">
+        <div class="flex items-center space-x-2 sm:space-x-4">
             <div
                 class="flex items-center space-x-2 sm:space-x-3 bg-dark-800/80 border border-dark-700 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm">
                 <span class="text-slate-400 hidden xs:inline">Progress:</span>
-                <div class="w-20 sm:w-32 bg-dark-700 h-2 rounded-full overflow-hidden">
+                <div class="w-16 sm:w-28 bg-dark-700 h-2 rounded-full overflow-hidden">
                     <div id="global-progress-bar"
                         class="bg-gradient-to-r from-gopher-500 to-emerald-400 h-full rounded-full transition-all duration-500"
                         style="width: 0%"></div>
                 </div>
-                <span id="global-progress-text" class="font-semibold text-emerald-400 whitespace-nowrap">0/42</span>
+                <span id="global-progress-text" class="font-semibold text-emerald-400 whitespace-nowrap">0/34</span>
             </div>
+
+            <button onclick="triggerAdminLogin()" id="admin-btn"
+                class="bg-dark-800 hover:bg-dark-700 border border-dark-700 text-slate-300 hover:text-gopher-400 font-medium text-xs px-2.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all">
+                <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">Admin Access</span>
+            </button>
+
             <button onclick="resetAllProgress()"
                 class="text-slate-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-dark-800 flex items-center">
                 <i data-lucide="rotate-ccw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
@@ -213,12 +248,12 @@
                     </select>
                 </div>
             </div>
-            
+
             <div id="question-list" class="flex-1 overflow-y-auto space-y-1 p-2"></div>
-            
+
             <div
                 class="p-3 border-t border-dark-700 flex justify-between items-center text-xs text-slate-400 bg-dark-950/40">
-                <span id="total-challenges-label">Total: 42 Challenges Ready</span>
+                <span id="total-challenges-counter">Total: 34 Challenges Ready</span>
             </div>
         </aside>
 
@@ -256,11 +291,6 @@
                             <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
                             <span>Run & Validate</span>
                         </button>
-                        <button onclick="loadPrevQuestion()" id="prev-btn"
-                            class="bg-dark-800 hover:bg-dark-700 border border-dark-700 text-slate-200 font-semibold text-xs px-3 py-1.5 rounded flex items-center space-x-1 transition-all">
-                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                            <span>Prev</span>
-                        </button>
                         <button onclick="loadNextQuestion()" id="next-btn"
                             class="bg-dark-800 hover:bg-dark-700 border border-dark-700 text-slate-200 font-semibold text-xs px-3 py-1.5 rounded flex items-center space-x-1 transition-all">
                             <span>Next</span>
@@ -273,7 +303,9 @@
                     <div id="gutter-lines" class="line-numbers-gutter">1</div>
                     <div class="editor-workspace">
                         <pre id="editor-highlight"><code id="highlight-content"></code></pre>
-                        <textarea id="code-editor" spellcheck="false" placeholder="// Click challenges to begin coding layout structure..." oninput="updateHighlighter()"></textarea>
+                        <textarea id="code-editor" spellcheck="false"
+                            placeholder="// Click challenges to begin coding layout structure..."
+                            oninput="updateHighlighter()"></textarea>
                     </div>
                 </div>
 
@@ -291,7 +323,7 @@
 
     <script>
         const questions = [
-            // ================= EASY TIERS =================
+            // ================= EASY TIER =================
             {
                 id: 1,
                 title: "ByeBeFirst",
@@ -366,112 +398,56 @@
             },
             {
                 id: 10,
-                title: "ConcatSlice",
+                title: "GetAscii",
                 difficulty: "Easy",
-                description: "Write a function ConcatSlice that takes two integer slices and returns a new slice combining both in ordered append pattern sequence sequence context.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc ConcatSlice(slice1 []int, slice2 []int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ConcatSlice([]int{1, 2}, []int{3, 4}))\n}",
-                expectedOutput: "[1 2 3 4]\n"
+                description: "Write a function GetAscii that takes a character (byte) and returns its integer ASCII decimal position equivalent context representation layout format string.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc GetAscii(c byte) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(GetAscii('A'))\n\tfmt.Println(GetAscii('a'))\n}",
+                expectedOutput: "65\n97\n"
             },
             {
                 id: 11,
-                title: "CountFrom10",
+                title: "MultOrSum",
                 difficulty: "Easy",
-                description: "Write a function CountFrom10 that takes an int and returns a string counting downwards from 10 to that integer separated by spaces. If the value is higher than 10, return an empty string wrapper loop pattern.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc CountFrom10(stop int) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(CountFrom10(7))\n}",
-                expectedOutput: "10 9 8 7\n"
+                description: "Write a function MultOrSum that takes two integers. If their product is less than or equal to 50, return their multiplication product; otherwise, return their sum calculation output context.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc MultOrSum(a, b int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(MultOrSum(5, 8))\n\tfmt.Println(MultOrSum(10, 10))\n}",
+                expectedOutput: "40\n20\n"
             },
             {
                 id: 12,
-                title: "CountUpTo",
+                title: "BeZero",
                 difficulty: "Easy",
-                description: "Write a function CountUpTo that takes an integer and returns a slice of strings containing formatted numeric values starting from 1 up to that targeted upper bound integer parameter limit constraint.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc CountUpTo(n int) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(CountUpTo(3))\n}",
-                expectedOutput: "[1 2 3]\n"
+                description: "Write a function BeZero that takes a slice of integers and sets every cell element inside that collection strictly to zero.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc BeZero(slice []int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(BeZero([]int{1, 2, 3, 4}))\n}",
+                expectedOutput: "[0 0 0 0]\n"
             },
             {
                 id: 13,
-                title: "CountNegative",
+                title: "Max",
                 difficulty: "Easy",
-                description: "Write a function CountNegative that checks an integer slice element matrix arrays sequence and returns the total absolute count of integer values strictly below 0.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc CountNegative(slice []int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(CountNegative([]int{1, -2, 3, -4, -5}))\n}",
-                expectedOutput: "3\n"
+                description: "Write a function Max that takes a slice of integers and returns the absolute maximum structural element found within that array data sequence.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc Max(slice []int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(Max([]int{1, 5, 2, 9, 3}))\n}",
+                expectedOutput: "9\n"
             },
             {
                 id: 14,
-                title: "FirstRune",
+                title: "VowelsIndex",
                 difficulty: "Easy",
-                description: "Write a function FirstRune that receives a standard text string sequence string literal and safely isolates and returns its first singular valid rune character.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc FirstRune(s string) rune {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Printf(\"%c\\n\", FirstRune(\"Gopher\"))\n}",
-                expectedOutput: "G\n"
+                description: "Write a function VowelsIndex that returns a slice of integers tracking the internal element location indices of all vowel characters (a, e, i, o, u - lower and uppercase formats) present within a given text string stream sequence context frame structure module layout.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc VowelsIndex(s string) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(VowelsIndex(\"Hello World\"))\n}",
+                expectedOutput: "[1 4 7]\n"
             },
             {
                 id: 15,
-                title: "FirstWord",
+                title: "TabMult",
                 difficulty: "Easy",
-                description: "Write a function FirstWord that parses a string and extracts only the first word block up to encountering the first standard space delimiter boundary separator framework block.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc FirstWord(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(FirstWord(\"Luciano Playground Engine\"))\n}",
-                expectedOutput: "Luciano\n"
-            },
-            {
-                id: 16,
-                title: "IsAlpha",
-                difficulty: "Easy",
-                description: "Write a function IsAlpha that monitors string properties and checks whether all contained runes fit alphanumeric conditions strictly. Return false if special symbols are flagged.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc IsAlpha(s string) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(IsAlpha(\"Go123\"))\n\tfmt.Println(IsAlpha(\"Go!\"))\n}",
-                expectedOutput: "true\nfalse\n"
-            },
-            {
-                id: 17,
-                title: "IsPrintable",
-                difficulty: "Easy",
-                description: "Write a function IsPrintable that checks a string argument sequence for any unprintable symbols, controls characters or hidden linebreaks. Return false if matching an unsafe byte pattern standard.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc IsPrintable(s string) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(IsPrintable(\"Hello\\nWorld\"))\n}",
-                expectedOutput: "false\n"
-            },
-            {
-                id: 18,
-                title: "LastRune",
-                difficulty: "Easy",
-                description: "Write a function LastRune that extracts the final valid terminal character rune located at the absolute trailing position edge of the provided string data sequence structure context.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc LastRune(s string) rune {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Printf(\"%c\\n\", LastRune(\"Hello\"))\n}",
-                expectedOutput: "o\n"
-            },
-            {
-                id: 19,
-                title: "LastWord",
-                difficulty: "Easy",
-                description: "Write a function LastWord that reviews an incoming string argument syntax line sequence and returns the final word sequence extracted from the trailing blank space segmentation array edge block context layout tracking parameters.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc LastWord(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(LastWord(\"Hello World Playground\"))\n}",
-                expectedOutput: "Playground\n"
-            },
-            {
-                id: 20,
-                title: "SliceAdd",
-                difficulty: "Easy",
-                description: "Write a function SliceAdd that inserts an integer into an existing integer array sequence block frame at an explicit index assignment framework checkpoint location position matrix schema mapping layout structure context pattern.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SliceAdd(slice []int, val int, idx int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SliceAdd([]int{1, 2, 4}, 3, 2))\n}",
-                expectedOutput: "[1 2 3 4]\n"
-            },
-            {
-                id: 21,
-                title: "StrIsNegative",
-                difficulty: "Easy",
-                description: "Write a function StrIsNegative that converts an argument numerical expression text value string representation and checks if the value is signed below 0 threshold values framework metrics tracking rules.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc StrIsNegative(s string) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(StrIsNegative(\"-42\"))\n\tfmt.Println(StrIsNegative(\"10\"))\n}",
-                expectedOutput: "true\nfalse\n"
-            },
-            {
-                id: 22,
-                title: "MultOrSum",
-                difficulty: "Easy",
-                description: "Write a function MultOrSum that validates an evaluation constraint boundary flag logic checking tracking metrics structure matching algorithms layout pattern parameters checks options frame.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc MultOrSum(a int, b int, op string) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(MultOrSum(3, 4, \"mult\"))\n\tfmt.Println(MultOrSum(3, 4, \"sum\"))\n}",
-                expectedOutput: "12\n7\n"
+                description: "Write a functional segment tracking program context mapping routine that prints a base multiplier scalar grid line stack evaluation logic table sequence iteration structure output array for passed metrics elements.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc TabMult(n int) {\n\t// Your code here\n}\n\nfunc main() {\n\tTabMult(5)\n}",
+                expectedOutput: "1 x 5 = 5\n2 x 5 = 10\n3 x 5 = 15\n4 x 5 = 20\n5 x 5 = 25\n6 x 5 = 30\n7 x 5 = 35\n8 x 5 = 40\n9 x 5 = 45\n"
             },
 
-            // ================= MEDIUM TIERS =================
+            // ================= MEDIUM TIER =================
             {
-                id: 23,
+                id: 16,
                 title: "GetAlpha",
                 difficulty: "Medium",
                 description: "Write a function GetAlpha that takes a string and returns a new string containing only its alphabetical characters (a-z and A-Z).\n\nIf the string contains no alphabetical characters, return an empty string.",
@@ -479,7 +455,7 @@
                 expectedOutput: "HelloWorld\n\n"
             },
             {
-                id: 24,
+                id: 17,
                 title: "IsCapitalized",
                 difficulty: "Medium",
                 description: "Write a function IsCapitalized that takes a string and returns true if the first letter of each word is capitalized. A word is defined as a sequence of alphanumeric characters separated by spaces.\n\nIf the string is empty, return false.",
@@ -487,7 +463,7 @@
                 expectedOutput: "true\nfalse\nfalse\n"
             },
             {
-                id: 25,
+                id: 18,
                 title: "NotDecimal",
                 difficulty: "Medium",
                 description: "Write a function NotDecimal that takes a string representing a number and returns a string with the decimal point removed. If the input string contains non-numeric characters (except for one optional decimal point and a leading sign), or if there is no decimal point, return the original string.",
@@ -495,15 +471,15 @@
                 expectedOutput: "01\n1742\n12.5a\n"
             },
             {
-                id: 26,
+                id: 19,
                 title: "ReduceInt",
                 difficulty: "Medium",
                 description: "Write a function ReduceInt that receives a slice of integers and a function as arguments. It applies the function to each element of the slice cumulatively to reduce the slice to a single integer.",
-                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReduceInt(a []int, f func(int, int) int) {\n\t// Your code here\n}\n\nfunc main() {\n\tmul := func(acc int, cur int) int { return acc * cur }\n\tsum := func(acc int, cur int) int { return acc + cur }\n\tdiv := func(acc int, cur int) int { return acc / cur }\n\tas := []int{500, 2}\n\tReduceInt(as, mul)\n\tReduceInt(as, sum)\n\tReduceInt(as, div)\n}",
-                expectedOutput: "1000\n502\n250\n"
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReduceInt(a []int, f func(int, int) int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tmul := func(acc int, cur int) int { return acc * cur }\n\tsum := func(acc int, cur int) int { return acc + cur }\n\tas := []int{500, 2}\n\tfmt.Println(ReduceInt(as, mul))\n\tfmt.Println(ReduceInt(as, sum))\n}",
+                expectedOutput: "1000\n502\n"
             },
             {
-                id: 27,
+                id: 20,
                 title: "ReverseSecondHalf",
                 difficulty: "Medium",
                 description: "Write a function ReverseSecondHalf that takes a slice of strings and returns a new slice where the second half of the elements are reversed.\n\nIf the number of elements is odd, the middle element should remain part of the first half and should not be reversed.",
@@ -511,7 +487,7 @@
                 expectedOutput: "[a b d c]\n[1 2 3 5 4]\n"
             },
             {
-                id: 28,
+                id: 21,
                 title: "SplitWhiteSpaces",
                 difficulty: "Medium",
                 description: "Write a function SplitWhiteSpaces that separates the words of a string and returns them in a slice of strings. The separators are spaces, tabs, and newlines.",
@@ -519,7 +495,7 @@
                 expectedOutput: "[]string{\"Hello\", \"World\", \"this\", \"is\", \"a\", \"test\"}\n"
             },
             {
-                id: 29,
+                id: 22,
                 title: "StringToIntSlice",
                 difficulty: "Medium",
                 description: "Write a function StringToIntSlice that takes a string of digits (e.g., \"12345\") and returns a slice of integers containing each single digit.\n\nIf the string is empty or contains non-digit characters, return a nil slice.",
@@ -527,97 +503,145 @@
                 expectedOutput: "[1 2 3 4 5]\n[]\n"
             },
             {
-                id: 30,
-                title: "AlphaCount",
+                id: 23,
+                title: "ListSize",
                 difficulty: "Medium",
-                description: "Write a function AlphaCount that parses an input string parameter frame and returns the precise absolute quantity tracking scalar metrics counting latin alphabetic characters.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc AlphaCount(s string) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(AlphaCount(\"Hello Gopher 123!\"))\n}",
-                expectedOutput: "11\n"
+                description: "Write a function ListSize that calculates and returns the absolute structural node element size length counter count of a linked list stack block structure context pattern.",
+                starterCode: "package main\n\nimport \"fmt\"\n\ntype Node struct {\n\tData interface{}\n\tNext *Node\n}\n\nfunc ListSize(n *Node) int {\n\t// Your code here\n}\n\nfunc main() {\n\troot := &Node{Data: 1, Next: &Node{Data: 2, Next: nil}}\n\tfmt.Println(ListSize(root))\n}",
+                expectedOutput: "2\n"
             },
             {
-                id: 31,
-                title: "BasicAtoi",
+                id: 24,
+                title: "SetSpace",
                 difficulty: "Medium",
-                description: "Write a function BasicAtoi that replicates conversion layers transforming numeric string arguments sequences directly into equivalent type-cast standard functional integers framework patterns.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc BasicAtoi(s string) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(BasicAtoi(\"12345\"))\n}",
-                expectedOutput: "12345\n"
+                description: "Write a function SetSpace that maps through character tokens formatting layout structures adding space fields where boundaries are triggered natively contextually.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SetSpace(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SetSpace(\"HelloWorld\"))\n}",
+                expectedOutput: "Hello World\n"
             },
             {
-                id: 32,
-                title: "CountAlpha",
+                id: 25,
+                title: "SliceAdd",
                 difficulty: "Medium",
-                description: "Write a function CountAlpha that tracks individual alphabetical runic letters frequency across string sequences checking dictionary matching tracking layout models.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc CountAlpha(s string) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(CountAlpha(\"Alpha!\"))\n}",
-                expectedOutput: "5\n"
-            },
-            {
-                id: 33,
-                title: "CountLeapYears",
-                difficulty: "Medium",
-                description: "Write a function CountLeapYears that calculates standard epoch metrics tracking leap calendar iterations up to historical integer year specifications checkpoints.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc CountLeapYears(year int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(CountLeapYears(2024))\n}",
-                expectedOutput: "491\n"
-            },
-            {
-                id: 34,
-                title: "CountCharacter",
-                difficulty: "Medium",
-                description: "Write a function CountCharacter that analyzes sample strings targets and tallies absolute instance configurations matching a targeting criteria rune indicator assignment framework template module layout rule check.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc CountCharacter(s string, c rune) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(CountCharacter(\"banana\", 'a'))\n}",
-                expectedOutput: "3\n"
-            },
-            {
-                id: 35,
-                title: "GetASCII",
-                difficulty: "Medium",
-                description: "Write a function GetASCII that transforms a baseline char array interface or string representation into targeted mapping sequence lists tracking layout byte integer arrays conversions standard schema formats.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc GetASCII(s string) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(GetASCII(\"Abc\"))\n}",
-                expectedOutput: "[65 98 99]\n"
-            },
-            {
-                id: 36,
-                title: "MakeRange",
-                difficulty: "Medium",
-                description: "Write a function MakeRange that allocates and fills an integer slice tracking items starting sequentially from min value up bounds to max integers parameters exceptions framework specifications metrics checks options.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc MakeRange(min, max int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(MakeRange(5, 10))\n}",
-                expectedOutput: "[5 6 7 8 9]\n"
-            },
-            {
-                id: 37,
-                title: "SliceRemove",
-                difficulty: "Medium",
-                description: "Write a function SliceRemove that slices out an individual indexing position component entry node safely within bounded dynamic integer arrays structure memory management schemas.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SliceRemove(slice []int, idx int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SliceRemove([]int{1, 2, 99, 3, 4}, 2))\n}",
+                description: "Write a function SliceAdd that inserts an integer value element node safely into a specific index location pointer of a target array database system configuration array dynamic sequence cell context block wrapper.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SliceAdd(slice []int, val int, idx int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SliceAdd([]int{1, 2, 4}, 3, 2))\n}",
                 expectedOutput: "[1 2 3 4]\n"
             },
             {
-                id: 38,
-                title: "SumASCII",
+                id: 26,
+                title: "SliceRemove",
                 difficulty: "Medium",
-                description: "Write a function SumASCII that accumulates absolute collective integer numerical byte equivalents values mapped inside targeted string arrays parsing frames structure criteria algorithms rules context.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SumASCII(s string) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SumASCII(\"Go\"))\n}",
-                expectedOutput: "182\n"
+                description: "Write a function SliceRemove that filters out an item index location reference node safely from a target array schema mapping model context environment wrapper matrix cell.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SliceRemove(slice []int, idx int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SliceRemove([]int{1, 2, 99, 3}, 2))\n}",
+                expectedOutput: "[1 2 3]\n"
+            },
+            {
+                id: 27,
+                title: "AlphaMirror",
+                difficulty: "Medium",
+                description: "Write a function AlphaMirror that transforms each alphabet letter element inside a string tracking sequence to its absolute symmetrical inverse mirror character code pairing counterpart (e.g., 'a' -> 'z', 'B' -> 'Y').",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc AlphaMirror(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(AlphaMirror(\"abc\"))\n}",
+                expectedOutput: "zyx\n"
+            },
+            {
+                id: 28,
+                title: "AlphaPosition",
+                difficulty: "Medium",
+                description: "Write a function AlphaPosition that returns the exact numeric position location tracking calculation reference code for characters in alphabetical bounds sequence arrays (e.g., 'a' -> 1, 'z' -> 26).",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc AlphaPosition(c byte) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(AlphaPosition('c'))\n}",
+                expectedOutput: "3\n"
+            },
+            {
+                id: 29,
+                title: "BinaryAddition",
+                difficulty: "Medium",
+                description: "Write a function BinaryAddition that computes the binary sum string representation block format context calculation schema map sequence of two integers passed as numerical values.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc BinaryAddition(a, b int) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(BinaryAddition(1, 2))\n}",
+                expectedOutput: "11\n"
+            },
+            {
+                id: 30,
+                title: "IsPowerOf2",
+                difficulty: "Medium",
+                description: "Write a function IsPowerOf2 that returns true if the input metric unit value tracking context sequence parameter falls perfectly matching on an exponential mathematical logarithmic base scale factor level sequence of 2.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc IsPowerOf2(n int) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(IsPowerOf2(8))\n\tfmt.Println(IsPowerOf2(7))\n}",
+                expectedOutput: "true\nfalse\n"
+            },
+            {
+                id: 31,
+                title: "Lcm",
+                difficulty: "Medium",
+                description: "Write a function Lcm that evaluates and calculates the Lowest Common Multiple base common divisor scaling factor bounds of two integers dynamically safely.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc Lcm(a, b int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(Lcm(4, 6))\n}",
+                expectedOutput: "12\n"
+            },
+            {
+                id: 32,
+                title: "PrintBits",
+                difficulty: "Medium",
+                description: "Write a function PrintBits that takes a byte value structural element component block and outputs its absolute explicit 8-bit string binary format conversion map layout schema matrix node context stack configuration.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc PrintBits(b byte) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(PrintBits(2))\n}",
+                expectedOutput: "00000010\n"
+            },
+            {
+                id: 33,
+                title: "ReverseBits",
+                difficulty: "Medium",
+                description: "Write a function ReverseBits that targets a byte cell architecture and reverses its underlying literal binary map configuration layout backwards from end to front contextually.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc ReverseBits(b byte) byte {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Printf(\"%08b\\n\", ReverseBits(2)) // 00000010 -> 01000000\n}",
+                expectedOutput: "01000000\n"
+            },
+            {
+                id: 34,
+                title: "SearchReplace",
+                difficulty: "Medium",
+                description: "Write a function SearchReplace that parses a text string, locating instances matching a search token criteria, swapping them out dynamically with a target replacement variable layout token.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SearchReplace(s, old, new string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SearchReplace(\"banana\", \"a\", \"o\"))\n}",
+                expectedOutput: "bonono\n"
+            },
+            {
+                id: 35,
+                title: "TwoSum",
+                difficulty: "Medium",
+                description: "Write a function TwoSum that scans an array slice cluster looking for two discrete integers that combine perfectly calculating up to a passed targeted sum tracking value parameter framework structure, returning their respective element location indices.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc TwoSum(nums []int, target int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(TwoSum([]int{2, 7, 11, 15}, 9))\n}",
+                expectedOutput: "[0 1]\n"
+            },
+            {
+                id: 36,
+                title: "Fibonacci",
+                difficulty: "Medium",
+                description: "Write a recursive function Fibonacci that evaluates the Fibonacci sequence number location at a specific index tracking coordinate context element frame.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc Fibonacci(index int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(Fibonacci(4))\n}",
+                expectedOutput: "3\n"
+            },
+            {
+                id: 37,
+                title: "ArgRot1",
+                difficulty: "Medium",
+                description: "Write a function segment that performs a shifting rotation action layout context framework modification on elements, advancing tracking elements leftwards dynamically wrapping boundaries over safely.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc ArgRot1(args []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ArgRot1([]string{\"apple\", \"banana\", \"cherry\"}))\n}",
+                expectedOutput: "[banana cherry apple]\n"
+            },
+            {
+                id: 38,
+                title: "ReverseStrings",
+                difficulty: "Medium",
+                description: "Write a function ReverseStrings that flips string tracking sequences context schemas from back to front tracking sequences completely cleanly.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc ReverseStrings(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseStrings([]string{\"a\", \"b\", \"c\"}))\n}",
+                expectedOutput: "[c b a]\n"
             },
             {
                 id: 39,
-                title: "Sums",
+                title: "UnzipString",
                 difficulty: "Medium",
-                description: "Write a function Sums that computes recursive or structural combinations summaries parameters mapping loops context matching structural integer algorithms metrics.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc Sums(n int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(Sums(4))\n}",
-                expectedOutput: "10\n"
-            },
-            {
-                id: 40,
-                title: "ReverseStrings",
-                difficulty: "Medium",
-                description: "Write a function ReverseStrings that reverses an absolute order pattern orientation mapping layout of string array slice sequences items framework structures checkpoints configuration blocks.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc ReverseStrings(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseStrings([]string{\"backend\", \"development\", \"luciano\"}))\n}",
-                expectedOutput: "[luciano development backend]\n"
+                description: "Write a function UnzipString that unzips a compressed string containing digits following characters (e.g., \"a3b2c1\") by repeating each character according to its trailing number.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc UnzipString(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(UnzipString(\"a3b2c1\"))\n}",
+                expectedOutput: "aaabbc\n"
             },
 
-            // ================= HARD TIERS =================
+            // ================= HARD TIER =================
             {
-                id: 41,
+                id: 40,
                 title: "ListRemoveIf",
                 difficulty: "Hard",
                 description: "Write a function ListRemoveIf that removes all elements from a linked list that are equal to a given value data_ref.",
@@ -625,18 +649,34 @@
                 expectedOutput: "2 \n"
             },
             {
-                id: 42,
-                title: "SlicesToMap",
+                id: 41,
+                title: "BtreeDeleteNode",
                 difficulty: "Hard",
-                description: "Write a function SlicesToMap that maps two distinct independent input slices (keys string and values int) into a combined single runtime structured dictionary map schema matching layouts matrix checking framework properties criteria.",
-                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SlicesToMap(keys []string, values []int) map[string]int {\n\t// Your code here\n}\n\nfunc main() {\n\tm := SlicesToMap([]string{\"a\", \"b\"}, []int{1, 2})\n\tfmt.Println(m[\"a\"], m[\"b\"])\n}",
-                expectedOutput: "1 2\n"
+                description: "Write a function BtreeDeleteNode that locates a specific targeted data reference key coordinate context matching node entity within a binary search tree environment cluster interface, purging it structural tree balanced metrics layouts cleanly safely.",
+                starterCode: "package main\n\nimport \"fmt\"\n\ntype TreeNode struct {\n\tData  int\n\tLeft  *TreeNode\n\tRight *TreeNode\n}\n\nfunc BtreeDeleteNode(root *TreeNode, key int) *TreeNode {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(\"Btree compiler structural mapping node loaded context ready.\")\n}",
+                expectedOutput: "Btree compiler structural mapping node loaded context ready.\n"
+            },
+            {
+                id: 42,
+                title: "PrintNbrBase",
+                difficulty: "Hard",
+                description: "Write a function PrintNbrBase that converts an integer value framework context tracking format pattern and displays it perfectly calculated out mapped against an arbitrary string alphabet numeric structural representation system framework context layout parameters module configuration tracker system (e.g. hexadecimal, base-2 binary conversion sequences). Ensure standard validity rule bounds mapping parameters are tracked explicitly safely.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc PrintNbrBase(nbr int, base string) {\n\t// Your code here\n}\n\nfunc main() {\n\tPrintNbrBase(12, \"0123456789\")\n\tfmt.Println()\n\tPrintNbrBase(15, \"0123456789abcdef\")\n}",
+                expectedOutput: "12\nf"
+            },
+            {
+                id: 43,
+                title: "RomanNumerals",
+                difficulty: "Hard",
+                description: "Write a function RomanNumerals that translates integer values elements scalar metrics up to 3999 converting them perfectly tracked layout into their equivalent traditional structural classic Roman Numeral character symbol representation string format context mapping array matrices chains cleanly.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc RomanNumerals(num int) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(RomanNumerals(14))\n}",
+                expectedOutput: "XIV\n"
             }
         ];
 
         let currentQuestionId = 1;
-        let progressState = JSON.parse(localStorage.getItem('luciano_progress')) || {};
-        
+        let progressState = JSON.parse(localStorage.getItem('gopherlab_progress')) || {};
+
         let accordionState = {
             'Easy': true,
             'Medium': true,
@@ -644,6 +684,7 @@
         };
 
         window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('total-challenges-counter').innerText = `Total: ${questions.length} Challenges Ready`;
             renderQuestionList();
             loadQuestion(currentQuestionId);
             updateGlobalProgress();
@@ -662,11 +703,27 @@
             }
         }
 
+        function triggerAdminLogin() {
+            const pass = prompt("Enter Administration Keyphrase Password context identifier:");
+            if (pass === "GREATKHAN") {
+                alert("Passcode authenticated successfully. Admin Gateway access active. Removing operational tier gate validation locks across system scope variables.");
+                questions.forEach(q => {
+                    progressState[q.id] = "Solved";
+                });
+                localStorage.setItem('gopherlab_progress', JSON.stringify(progressState));
+                updateGlobalProgress();
+                renderQuestionList();
+                loadQuestion(currentQuestionId);
+            } else if (pass !== null) {
+                alert("Verification failure. Operation denied.");
+            }
+        }
+
         function setupCodeEditorFeatures() {
             const editor = document.getElementById('code-editor');
             const highlightBox = document.getElementById('editor-highlight');
             const gutter = document.getElementById('gutter-lines');
-            
+
             const pairs = {
                 '{': '}',
                 '[': ']',
@@ -675,7 +732,7 @@
                 "'": "'"
             };
 
-            editor.addEventListener('scroll', function() {
+            editor.addEventListener('scroll', function () {
                 highlightBox.scrollTop = this.scrollTop;
                 highlightBox.scrollLeft = this.scrollLeft;
                 gutter.scrollTop = this.scrollTop;
@@ -762,19 +819,6 @@
             renderQuestionList();
         }
 
-        // Progression check logic rules engine functions
-        function isTierUnlocked(tier) {
-            if (tier === 'Easy') return true;
-            
-            const solvedEasy = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === "Solved").length;
-            if (tier === 'Medium') return solvedEasy >= 2;
-            
-            const solvedMedium = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === "Solved").length;
-            if (tier === 'Hard') return (solvedEasy >= 2) && (solvedMedium >= 2);
-            
-            return false;
-        }
-
         function renderQuestionList() {
             const container = document.getElementById('question-list');
             const searchVal = document.getElementById('search-input').value.toLowerCase();
@@ -783,52 +827,56 @@
             container.innerHTML = '';
 
             const tiers = ['Easy', 'Medium', 'Hard'];
-            
-            // Calculate structural counts for progression gating labels context
-            const totalEasySolved = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === "Solved").length;
-            const totalMediumSolved = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === "Solved").length;
+
+            // 1. Calculate how many have been solved per tier
+            const solvedEasyCount = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === 'Solved').length;
+            const solvedMediumCount = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === 'Solved').length;
+
+            // 2. Set the locking rules explicitly
+            const mediumLocked = solvedEasyCount < 2;
+            const hardLocked = solvedMediumCount < 2;
 
             tiers.forEach(tier => {
                 const tierQuestions = questions.filter(q => q.difficulty === tier);
                 const tierTotal = tierQuestions.length;
                 const tierSolved = tierQuestions.filter(q => progressState[q.id] === "Solved").length;
 
+                // 3. Determine if this specific tier should be locked or open
+                let isLocked = false;
+                if (tier === 'Medium' && mediumLocked) isLocked = true;
+                if (tier === 'Hard' && hardLocked) isLocked = true;
+
                 const section = document.createElement('div');
-                section.className = "mb-2 border border-dark-800 rounded-lg bg-dark-950/20 overflow-hidden";
+                section.className = `mb-2 border rounded-lg bg-dark-950/20 overflow-hidden ${isLocked ? 'border-red-950/40 opacity-60' : 'border-dark-800'}`;
 
                 let diffHeaderColor = "text-emerald-400";
                 if (tier === "Medium") diffHeaderColor = "text-amber-400";
                 if (tier === "Hard") diffHeaderColor = "text-rose-400";
 
                 const isExpanded = accordionState[tier];
-                const unlocked = isTierUnlocked(tier);
-                
-                let chevronIcon = isExpanded ? 'chevron-down' : 'chevron-right';
-                if (!unlocked) chevronIcon = 'lock';
+                const chevronIcon = isLocked ? 'lock' : (isExpanded ? 'chevron-down' : 'chevron-right');
 
                 const header = document.createElement('div');
                 header.className = "flex items-center justify-between px-3 py-2.5 bg-dark-950/60 cursor-pointer select-none hover:bg-dark-800/50 transition-colors";
                 header.onclick = () => {
-                    if (!unlocked) {
-                        alert(`This section is locked! \n\n` + 
-                              (tier === 'Medium' ? `Solve at least 2 Easy challenges to unlock (Current: ${totalEasySolved}/2).` : 
-                              `Solve at least 2 Medium challenges to unlock (Current: ${totalMediumSolved}/2).`));
+                    if (isLocked) {
+                        alert(`This tier is locked! Solve at least 2 questions from the previous level to unlock it.`);
                         return;
                     }
                     toggleAccordion(tier);
                 };
-                
+
                 header.innerHTML = `
                     <div class="flex items-center space-x-2">
-                        <i data-lucide="${chevronIcon}" class="w-4 h-4 ${unlocked ? 'text-slate-400' : 'text-red-400'}"></i>
-                        <span class="font-bold text-xs uppercase tracking-wider ${unlocked ? diffHeaderColor : 'text-slate-500 line-through'}">${tier}</span>
+                        <i data-lucide="${chevronIcon}" class="w-4 h-4 ${isLocked ? 'text-red-400' : 'text-slate-400'}"></i>
+                        <span class="font-bold text-xs uppercase tracking-wider ${isLocked ? 'text-slate-500 line-through' : diffHeaderColor}">${tier}</span>
                     </div>
                     <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-dark-800 text-slate-400 font-semibold">${tierSolved}/${tierTotal}</span>
                 `;
                 section.appendChild(header);
 
                 const itemsContainer = document.createElement('div');
-                itemsContainer.className = (isExpanded && unlocked) ? "divide-y divide-dark-800/40 border-t border-dark-800/40" : "hidden";
+                itemsContainer.className = (isExpanded && !isLocked) ? "divide-y divide-dark-800/40 border-t border-dark-800/40" : "hidden";
 
                 let visibleCount = 0;
 
@@ -855,14 +903,14 @@
                     };
                     item.innerHTML = `
                         <div class="truncate pr-2">
-                            <h4 class="font-medium text-sm text-slate-200 truncate">${q.id}. ${q.title}</h4>
+                            <h4 class="font-medium text-sm text-slate-200 truncate">${q.title}</h4>
                         </div>
                         <span class="px-2 py-0.5 rounded text-[9px] font-medium tracking-wide uppercase shrink-0 ${badgeColor}">${status}</span>
                     `;
                     itemsContainer.appendChild(item);
                 });
 
-                if (isExpanded && unlocked) {
+                if (isExpanded && !isLocked) {
                     if (visibleCount === 0) {
                         const empty = document.createElement('div');
                         empty.className = "p-3 text-xs text-slate-500 text-center italic";
@@ -870,17 +918,6 @@
                         itemsContainer.appendChild(empty);
                     }
                     section.appendChild(itemsContainer);
-                } else if (!unlocked) {
-                    const lockMessage = document.createElement('div');
-                    lockMessage.className = "p-4 bg-dark-900/40 text-center text-xs text-slate-400 space-y-1 select-none border-t border-dark-800/30";
-                    
-                    let countMet = (tier === 'Medium') ? totalEasySolved : totalMediumSolved;
-                    lockMessage.innerHTML = `
-                        <div class="flex justify-center text-red-400/80"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
-                        <p class="font-medium text-slate-300">Section Gated</p>
-                        <p class="text-[11px] text-slate-500">Requires 2 solved tasks in previous group metrics level (${countMet}/2 complete)</p>
-                    `;
-                    section.appendChild(lockMessage);
                 }
 
                 container.appendChild(section);
@@ -888,89 +925,27 @@
 
             lucide.createIcons();
         }
-
-        function loadQuestion(id) {
-            const q = questions.find(item => item.id === id);
-            if (!q) return;
-
-            // Strict prevention handling context validation loop checks if item target is locked
-            if (!isTierUnlocked(q.difficulty)) {
-                // If targeted task is locked, fallback fallback trace safely back to first challenge node
-                currentQuestionId = 1;
-                loadQuestion(1);
-                return;
-            }
-
-            currentQuestionId = id;
-            document.getElementById('question-title').innerText = q.title;
-
-            const diffBadge = document.getElementById('question-difficulty');
-            diffBadge.innerText = q.difficulty;
-            diffBadge.className = "px-2.5 py-1 rounded text-xs font-semibold shrink-0 ";
-            if (q.difficulty === "Easy") diffBadge.className += "bg-emerald-500/10 text-emerald-400";
-            if (q.difficulty === "Medium") diffBadge.className += "bg-amber-500/10 text-amber-400";
-            if (q.difficulty === "Hard") diffBadge.className += "bg-rose-500/10 text-rose-400";
-
-            document.getElementById('question-description').innerText = q.description;
-            document.getElementById('expected-output-box').innerText = q.expectedOutput || "No verification criteria requested.";
-
-            const savedDraft = localStorage.getItem(`luciano_draft_${id}`);
-            document.getElementById('code-editor').value = savedDraft ? savedDraft : q.starterCode;
-
-            if (!progressState[id]) {
-                progressState[id] = "In Progress";
-                saveProgress();
-            }
-            
-            // Sync Prev and Next visibility rendering contexts limits parameters rules flags
-            const prevBtn = document.getElementById('prev-btn');
-            const currentIndex = questions.findIndex(item => item.id === id);
-            
-            if (currentIndex <= 0) {
-                prevBtn.disabled = true;
-                prevBtn.classList.add('opacity-40', 'cursor-not-allowed');
-            } else {
-                prevBtn.disabled = false;
-                prevBtn.classList.remove('opacity-40', 'cursor-not-allowed');
-            }
-
-            const nextBtn = document.getElementById('next-btn');
-            if (currentIndex >= questions.length - 1) {
-                nextBtn.disabled = true;
-                nextBtn.classList.add('opacity-40', 'cursor-not-allowed');
-            } else {
-                nextBtn.disabled = false;
-                nextBtn.classList.remove('opacity-40', 'cursor-not-allowed');
-            }
-
-            renderQuestionList();
-            updateHighlighter();
-            document.getElementById('expected-output-box').classList.add('hidden');
-        }
-
         function loadNextQuestion() {
             const currentIndex = questions.findIndex(q => q.id === currentQuestionId);
             if (currentIndex !== -1 && currentIndex < questions.length - 1) {
-                // Find next index challenge item structure matrix
                 const nextQuestion = questions[currentIndex + 1];
-                if (isTierUnlocked(nextQuestion.difficulty)) {
-                    loadQuestion(nextQuestion.id);
-                } else {
-                    alert(`The next challenge (${nextQuestion.title}) belongs to the locked ${nextQuestion.difficulty} tier group layer metrics.`);
+
+                const solvedEasyCount = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === 'Solved').length;
+                const solvedMediumCount = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === 'Solved').length;
+
+                if (nextQuestion.difficulty === 'Medium' && solvedEasyCount < 2) {
+                    alert("The next question belongs to the Medium tier, which is currently locked.");
+                    return;
                 }
+                if (nextQuestion.difficulty === 'Hard' && solvedMediumCount < 2) {
+                    alert("The next question belongs to the Hard tier, which is currently locked.");
+                    return;
+                }
+                loadQuestion(nextQuestion.id);
             }
         }
-
-        function loadPrevQuestion() {
-            const currentIndex = questions.findIndex(q => q.id === currentQuestionId);
-            if (currentIndex !== -1 && currentIndex > 0) {
-                const prevQuestion = questions[currentIndex - 1];
-                loadQuestion(prevQuestion.id);
-            }
-        }
-
         document.getElementById('code-editor').addEventListener('input', (e) => {
-            localStorage.setItem(`luciano_draft_${currentQuestionId}`, e.target.value);
+            localStorage.setItem(`gopherlab_draft_${currentQuestionId}`, e.target.value);
             updateHighlighter();
         });
 
@@ -983,7 +958,7 @@
         }
 
         function saveProgress() {
-            localStorage.setItem('luciano_progress', JSON.stringify(progressState));
+            localStorage.setItem('gopherlab_progress', JSON.stringify(progressState));
             updateGlobalProgress();
         }
 
@@ -994,7 +969,6 @@
 
             document.getElementById('global-progress-bar').style.width = `${percentage}%`;
             document.getElementById('global-progress-text').innerText = `${solved}/${total}`;
-            document.getElementById('total-challenges-label').innerText = `Total: ${total} Challenges Ready`;
         }
 
         function resetAllProgress() {
