@@ -63,10 +63,21 @@
             background: #374151;
         }
 
-        .terminal-info { color: #38bdf8; }
-        .terminal-success { color: #34d399; }
-        .terminal-error { color: #f87171; }
-        .terminal-stdout { color: #e2e8f0; }
+        .terminal-info {
+            color: #38bdf8;
+        }
+
+        .terminal-success {
+            color: #34d399;
+        }
+
+        .terminal-error {
+            color: #f87171;
+        }
+
+        .terminal-stdout {
+            color: #e2e8f0;
+        }
 
         .editor-container {
             position: relative;
@@ -101,7 +112,8 @@
             height: 100%;
         }
 
-        #code-editor, #editor-highlight {
+        #code-editor,
+        #editor-highlight {
             position: absolute;
             top: 0;
             left: 0;
@@ -139,11 +151,27 @@
             pointer-events: none;
         }
 
-        .token-keyword { color: #f43f5e; font-weight: 600; }
-        .token-type { color: #38bdf8; }
-        .token-string { color: #34d399; }
-        .token-comment { color: #64748b; font-style: italic; }
-        .token-builtin { color: #fbbf24; }
+        .token-keyword {
+            color: #f43f5e;
+            font-weight: 600;
+        }
+
+        .token-type {
+            color: #38bdf8;
+        }
+
+        .token-string {
+            color: #34d399;
+        }
+
+        .token-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .token-builtin {
+            color: #fbbf24;
+        }
     </style>
 </head>
 
@@ -174,7 +202,7 @@
                         class="bg-gradient-to-r from-gopher-500 to-emerald-400 h-full rounded-full transition-all duration-500"
                         style="width: 0%"></div>
                 </div>
-                <span id="global-progress-text" class="font-semibold text-emerald-400 whitespace-nowrap">0/42</span>
+                <span id="global-progress-text" class="font-semibold text-emerald-400 whitespace-nowrap">0/56</span>
             </div>
             <button onclick="resetAllProgress()"
                 class="text-slate-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-dark-800 flex items-center">
@@ -213,12 +241,12 @@
                     </select>
                 </div>
             </div>
-            
+
             <div id="question-list" class="flex-1 overflow-y-auto space-y-1 p-2"></div>
-            
+
             <div
                 class="p-3 border-t border-dark-700 flex justify-between items-center text-xs text-slate-400 bg-dark-950/40">
-                <span id="total-challenges-label">Total: 42 Challenges Ready</span>
+                <span id="total-challenges-label">Total: 56 Challenges Ready</span>
             </div>
         </aside>
 
@@ -273,7 +301,9 @@
                     <div id="gutter-lines" class="line-numbers-gutter">1</div>
                     <div class="editor-workspace">
                         <pre id="editor-highlight"><code id="highlight-content"></code></pre>
-                        <textarea id="code-editor" spellcheck="false" placeholder="// Click challenges to begin coding layout structure..." oninput="updateHighlighter()"></textarea>
+                        <textarea id="code-editor" spellcheck="false"
+                            placeholder="// Click challenges to begin coding layout structure..."
+                            oninput="updateHighlighter()"></textarea>
                     </div>
                 </div>
 
@@ -507,7 +537,7 @@
                 title: "ReverseSecondHalf",
                 difficulty: "Medium",
                 description: "Write a function ReverseSecondHalf that takes a slice of strings and returns a new slice where the second half of the elements are reversed.\n\nIf the number of elements is odd, the middle element should remain part of the first half and should not be reversed.",
-                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReverseSecondHalf(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseSecondHalf([]string{\"a\", \"b\", \"c\", \"d\"}))\n\tfmt.Println(ReverseSecondHalf([]string{\"1\", \"2\", \"3\", \"4\", \"5\"}))\n}",
+                starterCode: "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc ReverseSecondHalf(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseSecondHalf([]string(\"a\", \"b\", \"c\", \"d\")))\n\tfmt.Println(ReverseSecondHalf([]string(\"1\", \"2\", \"3\", \"4\", \"5\")))\n}",
                 expectedOutput: "[a b d c]\n[1 2 3 5 4]\n"
             },
             {
@@ -614,6 +644,30 @@
                 starterCode: "package main\n\nimport \"fmt\"\n\nfunc ReverseStrings(slice []string) []string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(ReverseStrings([]string{\"backend\", \"development\", \"luciano\"}))\n}",
                 expectedOutput: "[luciano development backend]\n"
             },
+            {
+                id: 43,
+                title: "BeZero",
+                difficulty: "Medium",
+                description: "Write a function BeZero that takes a slice of integers and modifies all its values to become 0. Return the modified slice.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc BeZero(slice []int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(BeZero([]int{1, 2, 3, 4}))\n}",
+                expectedOutput: "[0 0 0 0]\n"
+            },
+            {
+                id: 44,
+                title: "Max",
+                difficulty: "Medium",
+                description: "Write a function Max that takes a slice of integers and returns the maximum value found inside the slice. If the slice is empty, return 0.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc Max(slice []int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(Max([]int{2, 8, 4, 12, 5}))\n}",
+                expectedOutput: "12\n"
+            },
+            {
+                id: 45,
+                title: "SetSpace",
+                difficulty: "Medium",
+                description: "Write a function SetSpace that takes a string and returns a new string where every single character is separated by an empty space string delimiter block layer.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SetSpace(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SetSpace(\"Hello\"))\n}",
+                expectedOutput: "H e l l o\n"
+            },
 
             // ================= HARD TIERS =================
             {
@@ -631,12 +685,92 @@
                 description: "Write a function SlicesToMap that maps two distinct independent input slices (keys string and values int) into a combined single runtime structured dictionary map schema matching layouts matrix checking framework properties criteria.",
                 starterCode: "package main\n\nimport \"fmt\"\n\nfunc SlicesToMap(keys []string, values []int) map[string]int {\n\t// Your code here\n}\n\nfunc main() {\n\tm := SlicesToMap([]string{\"a\", \"b\"}, []int{1, 2})\n\tfmt.Println(m[\"a\"], m[\"b\"])\n}",
                 expectedOutput: "1 2\n"
+            },
+            {
+                id: 46,
+                title: "ListSize",
+                difficulty: "Hard",
+                description: "Write a function ListSize that takes a pointer to a linked list structure container layout and recursively or sequentially counts its nodes nodes context elements.",
+                starterCode: "package main\n\nimport \"fmt\"\n\ntype Node struct {\n\tData interface{}\n\tNext *Node\n}\n\ntype List struct {\n\tHead *Node\n}\n\nfunc ListSize(l *List) int {\n\t// Your code here\n}\n\nfunc main() {\n\tl := &List{}\n\tl.Head = &Node{Data: 1, Next: &Node{Data: 2, Next: &Node{Data: 3, Next: nil}}}\n\tfmt.Println(ListSize(l))\n}",
+                expectedOutput: "3\n"
+            },
+            {
+                id: 47,
+                title: "AlphaMirror",
+                difficulty: "Hard",
+                description: "Write a function AlphaMirror that mirrors alphabetical values across symmetric mapping logic layers: 'a' becomes 'z', 'b' becomes 'y', and capitalization properties are preserved.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc AlphaMirror(s string) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(AlphaMirror(\"abc ABC\"))\n}",
+                expectedOutput: "zyx ZYX\n"
+            },
+            {
+                id: 48,
+                title: "AlphaPosition",
+                difficulty: "Hard",
+                description: "Write a function AlphaPosition that returns the numerical index position of a letter inside the Latin alphabet (1 to 26). Returns -1 for special character exceptions.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc AlphaPosition(c rune) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(AlphaPosition('c'))\n\tfmt.Println(AlphaPosition('Z'))\n}",
+                expectedOutput: "3\n26\n"
+            },
+            {
+                id: 49,
+                title: "BinaryAddition",
+                difficulty: "Hard",
+                description: "Write a function BinaryAddition that takes two generic integers arguments parameters computes their sum, and reformats the output into its raw binary string presentation formatting equivalent metric context template.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc BinaryAddition(a, b int) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(BinaryAddition(1, 2))\n}",
+                expectedOutput: "11\n"
+            },
+            {
+                id: 50,
+                title: "IsPowerOf2",
+                difficulty: "Hard",
+                description: "Write a function IsPowerOf2 checking bit manipulation conditions if an individual input criteria matches standard logarithmic base-2 iterations cleanly and returns a boolean response.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc IsPowerOf2(n int) bool {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(IsPowerOf2(4))\n\tfmt.Println(IsPowerOf2(5))\n}",
+                expectedOutput: "true\nfalse\n"
+            },
+            {
+                id: 51,
+                title: "LCM",
+                difficulty: "Hard",
+                description: "Write a function LCM that evaluates two standard integer scalar configuration metrics constraints and isolates their structural Least Common Multiple factor.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc LCM(a, b int) int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(LCM(4, 6))\n}",
+                expectedOutput: "12\n"
+            },
+            {
+                id: 52,
+                title: "PrintBits",
+                difficulty: "Hard",
+                description: "Write a function PrintBits that decodes a scalar single byte value criteria container data format item and yields an explicit 8-character long string binary map layout presentation schema format.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc PrintBits(n byte) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(PrintBits(2))\n}",
+                expectedOutput: "00000010\n"
+            },
+            {
+                id: 53,
+                title: "ReverseBits",
+                difficulty: "Hard",
+                description: "Write a function ReverseBits that targets binary representation structure blocks of an individual raw byte and completely flips the binary direction sequence map topology layers context properties layout framework metric parameters options.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc ReverseBits(n byte) byte {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Printf(\"%08b\\n\", ReverseBits(128))\n}",
+                expectedOutput: "00000001\n"
+            },
+            {
+                id: 54,
+                title: "SearchReplace",
+                difficulty: "Hard",
+                description: "Write a function SearchReplace that parses an input string parameter frame and executes character swaps matching lookups parameters criteria checkpoints logic matching mappings.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc SearchReplace(s string, search, replace rune) string {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(SearchReplace(\"banana\", 'a', 'o'))\n}",
+                expectedOutput: "bonono\n"
+            },
+            {
+                id: 55,
+                title: "TwoSum",
+                difficulty: "Hard",
+                description: "Write a function TwoSum analyzing slice tracking items to map dynamic indexing locations components configurations whose aggregate evaluations hit an explicit target tracking integer check.",
+                starterCode: "package main\n\nimport \"fmt\"\n\nfunc TwoSum(slice []int, target int) []int {\n\t// Your code here\n}\n\nfunc main() {\n\tfmt.Println(TwoSum([]int{2, 7, 11, 15}, 9))\n}",
+                expectedOutput: "[0 1]\n"
             }
         ];
 
         let currentQuestionId = 1;
         let progressState = JSON.parse(localStorage.getItem('luciano_progress')) || {};
-        
+
         let accordionState = {
             'Easy': true,
             'Medium': true,
@@ -666,7 +800,7 @@
             const editor = document.getElementById('code-editor');
             const highlightBox = document.getElementById('editor-highlight');
             const gutter = document.getElementById('gutter-lines');
-            
+
             const pairs = {
                 '{': '}',
                 '[': ']',
@@ -675,7 +809,7 @@
                 "'": "'"
             };
 
-            editor.addEventListener('scroll', function() {
+            editor.addEventListener('scroll', function () {
                 highlightBox.scrollTop = this.scrollTop;
                 highlightBox.scrollLeft = this.scrollLeft;
                 gutter.scrollTop = this.scrollTop;
@@ -762,16 +896,15 @@
             renderQuestionList();
         }
 
-        // Progression check logic rules engine functions
         function isTierUnlocked(tier) {
             if (tier === 'Easy') return true;
-            
+
             const solvedEasy = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === "Solved").length;
             if (tier === 'Medium') return solvedEasy >= 2;
-            
+
             const solvedMedium = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === "Solved").length;
             if (tier === 'Hard') return (solvedEasy >= 2) && (solvedMedium >= 2);
-            
+
             return false;
         }
 
@@ -784,35 +917,36 @@
 
             const tiers = ['Easy', 'Medium', 'Hard'];
             
-            // Calculate structural counts for progression gating labels context
-            const totalEasySolved = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === "Solved").length;
-            const totalMediumSolved = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === "Solved").length;
+            const solvedEasyCount = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === 'Solved').length;
+            const solvedMediumCount = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === 'Solved').length;
+
+            const mediumLocked = solvedEasyCount < 2;
+            const hardLocked = solvedMediumCount < 2;
 
             tiers.forEach(tier => {
                 const tierQuestions = questions.filter(q => q.difficulty === tier);
                 const tierTotal = tierQuestions.length;
                 const tierSolved = tierQuestions.filter(q => progressState[q.id] === "Solved").length;
 
+                let isLocked = false;
+                if (tier === 'Medium' && mediumLocked) isLocked = true;
+                if (tier === 'Hard' && hardLocked) isLocked = true;
+
                 const section = document.createElement('div');
-                section.className = "mb-2 border border-dark-800 rounded-lg bg-dark-950/20 overflow-hidden";
+                section.className = `mb-2 border rounded-lg bg-dark-950/20 overflow-hidden ${isLocked ? 'border-red-950/40 opacity-60' : 'border-dark-800'}`;
 
                 let diffHeaderColor = "text-emerald-400";
                 if (tier === "Medium") diffHeaderColor = "text-amber-400";
                 if (tier === "Hard") diffHeaderColor = "text-rose-400";
 
                 const isExpanded = accordionState[tier];
-                const unlocked = isTierUnlocked(tier);
-                
-                let chevronIcon = isExpanded ? 'chevron-down' : 'chevron-right';
-                if (!unlocked) chevronIcon = 'lock';
+                const chevronIcon = isLocked ? 'lock' : (isExpanded ? 'chevron-down' : 'chevron-right');
 
                 const header = document.createElement('div');
                 header.className = "flex items-center justify-between px-3 py-2.5 bg-dark-950/60 cursor-pointer select-none hover:bg-dark-800/50 transition-colors";
                 header.onclick = () => {
-                    if (!unlocked) {
-                        alert(`This section is locked! \n\n` + 
-                              (tier === 'Medium' ? `Solve at least 2 Easy challenges to unlock (Current: ${totalEasySolved}/2).` : 
-                              `Solve at least 2 Medium challenges to unlock (Current: ${totalMediumSolved}/2).`));
+                    if (isLocked) {
+                        alert(`This tier is locked! Solve at least 2 questions from the previous level to unlock it.`);
                         return;
                     }
                     toggleAccordion(tier);
@@ -820,15 +954,15 @@
                 
                 header.innerHTML = `
                     <div class="flex items-center space-x-2">
-                        <i data-lucide="${chevronIcon}" class="w-4 h-4 ${unlocked ? 'text-slate-400' : 'text-red-400'}"></i>
-                        <span class="font-bold text-xs uppercase tracking-wider ${unlocked ? diffHeaderColor : 'text-slate-500 line-through'}">${tier}</span>
+                        <i data-lucide="${chevronIcon}" class="w-4 h-4 ${isLocked ? 'text-red-400' : 'text-slate-400'}"></i>
+                        <span class="font-bold text-xs uppercase tracking-wider ${isLocked ? 'text-slate-500 line-through' : diffHeaderColor}">${tier}</span>
                     </div>
                     <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-dark-800 text-slate-400 font-semibold">${tierSolved}/${tierTotal}</span>
                 `;
                 section.appendChild(header);
 
                 const itemsContainer = document.createElement('div');
-                itemsContainer.className = (isExpanded && unlocked) ? "divide-y divide-dark-800/40 border-t border-dark-800/40" : "hidden";
+                itemsContainer.className = (isExpanded && !isLocked) ? "divide-y divide-dark-800/40 border-t border-dark-800/40" : "hidden";
 
                 let visibleCount = 0;
 
@@ -848,116 +982,84 @@
 
                     const item = document.createElement('div');
                     item.className = `py-3 pr-4 cursor-pointer transition-all flex items-center justify-between ${activeClass}`;
+                    
                     item.onclick = (e) => {
                         e.stopPropagation();
+                        e.preventDefault();
                         loadQuestion(q.id);
-                        toggleSidebar(false);
+                        if (typeof toggleSidebar === 'function') toggleSidebar(false);
                     };
+
                     item.innerHTML = `
-                        <div class="truncate pr-2">
-                            <h4 class="font-medium text-sm text-slate-200 truncate">${q.id}. ${q.title}</h4>
+                        <div class="truncate pr-2 pointer-events-none">
+                            <h4 class="font-medium text-sm text-slate-200 truncate">${q.title}</h4>
                         </div>
-                        <span class="px-2 py-0.5 rounded text-[9px] font-medium tracking-wide uppercase shrink-0 ${badgeColor}">${status}</span>
+                        <span class="px-2 py-0.5 rounded text-[9px] font-medium tracking-wide uppercase shrink-0 ${badgeColor} pointer-events-none">${status}</span>
                     `;
                     itemsContainer.appendChild(item);
                 });
 
-                if (isExpanded && unlocked) {
+                if (isExpanded && !isLocked) {
                     if (visibleCount === 0) {
                         const empty = document.createElement('div');
                         empty.className = "p-3 text-xs text-slate-500 text-center italic";
                         empty.innerText = "No matching challenges found.";
                         itemsContainer.appendChild(empty);
                     }
-                    section.appendChild(itemsContainer);
-                } else if (!unlocked) {
-                    const lockMessage = document.createElement('div');
-                    lockMessage.className = "p-4 bg-dark-900/40 text-center text-xs text-slate-400 space-y-1 select-none border-t border-dark-800/30";
-                    
-                    let countMet = (tier === 'Medium') ? totalEasySolved : totalMediumSolved;
-                    lockMessage.innerHTML = `
-                        <div class="flex justify-center text-red-400/80"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
-                        <p class="font-medium text-slate-300">Section Gated</p>
-                        <p class="text-[11px] text-slate-500">Requires 2 solved tasks in previous group metrics level (${countMet}/2 complete)</p>
-                    `;
-                    section.appendChild(lockMessage);
                 }
-
+                
+                section.appendChild(itemsContainer);
                 container.appendChild(section);
             });
 
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         }
 
         function loadQuestion(id) {
+            currentQuestionId = id;
             const q = questions.find(item => item.id === id);
             if (!q) return;
 
-            // Strict prevention handling context validation loop checks if item target is locked
-            if (!isTierUnlocked(q.difficulty)) {
-                // If targeted task is locked, fallback fallback trace safely back to first challenge node
-                currentQuestionId = 1;
-                loadQuestion(1);
-                return;
-            }
-
-            currentQuestionId = id;
             document.getElementById('question-title').innerText = q.title;
-
+            document.getElementById('question-description').innerText = q.description;
+            
             const diffBadge = document.getElementById('question-difficulty');
             diffBadge.innerText = q.difficulty;
             diffBadge.className = "px-2.5 py-1 rounded text-xs font-semibold shrink-0 ";
-            if (q.difficulty === "Easy") diffBadge.className += "bg-emerald-500/10 text-emerald-400";
-            if (q.difficulty === "Medium") diffBadge.className += "bg-amber-500/10 text-amber-400";
-            if (q.difficulty === "Hard") diffBadge.className += "bg-rose-500/10 text-rose-400";
-
-            document.getElementById('question-description').innerText = q.description;
-            document.getElementById('expected-output-box').innerText = q.expectedOutput || "No verification criteria requested.";
+            if (q.difficulty === 'Easy') diffBadge.className += "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25";
+            if (q.difficulty === 'Medium') diffBadge.className += "bg-amber-500/10 text-amber-400 border border-amber-500/25";
+            if (q.difficulty === 'Hard') diffBadge.className += "bg-rose-500/10 text-rose-400 border border-rose-500/25";
 
             const savedDraft = localStorage.getItem(`luciano_draft_${id}`);
-            document.getElementById('code-editor').value = savedDraft ? savedDraft : q.starterCode;
+            document.getElementById('code-editor').value = savedDraft || q.starterCode;
+            document.getElementById('expected-output-box').innerText = q.expectedOutput;
 
-            if (!progressState[id]) {
+            if (progressState[id] !== "Solved") {
                 progressState[id] = "In Progress";
                 saveProgress();
-            }
-            
-            // Sync Prev and Next visibility rendering contexts limits parameters rules flags
-            const prevBtn = document.getElementById('prev-btn');
-            const currentIndex = questions.findIndex(item => item.id === id);
-            
-            if (currentIndex <= 0) {
-                prevBtn.disabled = true;
-                prevBtn.classList.add('opacity-40', 'cursor-not-allowed');
-            } else {
-                prevBtn.disabled = false;
-                prevBtn.classList.remove('opacity-40', 'cursor-not-allowed');
-            }
-
-            const nextBtn = document.getElementById('next-btn');
-            if (currentIndex >= questions.length - 1) {
-                nextBtn.disabled = true;
-                nextBtn.classList.add('opacity-40', 'cursor-not-allowed');
-            } else {
-                nextBtn.disabled = false;
-                nextBtn.classList.remove('opacity-40', 'cursor-not-allowed');
             }
 
             renderQuestionList();
             updateHighlighter();
-            document.getElementById('expected-output-box').classList.add('hidden');
         }
 
         function loadNextQuestion() {
             const currentIndex = questions.findIndex(q => q.id === currentQuestionId);
             if (currentIndex !== -1 && currentIndex < questions.length - 1) {
-                // Find next index challenge item structure matrix
                 const nextQuestion = questions[currentIndex + 1];
-                if (isTierUnlocked(nextQuestion.difficulty)) {
-                    loadQuestion(nextQuestion.id);
-                } else {
-                    alert(`The next challenge (${nextQuestion.title}) belongs to the locked ${nextQuestion.difficulty} tier group layer metrics.`);
+
+                const solvedEasyCount = questions.filter(q => q.difficulty === 'Easy' && progressState[q.id] === 'Solved').length;
+                const solvedMediumCount = questions.filter(q => q.difficulty === 'Medium' && progressState[q.id] === 'Solved').length;
+
+                if (nextQuestion.difficulty === 'Medium' && solvedEasyCount < 2) {
+                    alert("The next question belongs to the Medium tier, which is currently locked.");
+                    return;
                 }
+                if (nextQuestion.difficulty === 'Hard' && solvedMediumCount < 2) {
+                    alert("The next question belongs to the Hard tier, which is currently locked.");
+                    return;
+                }
+                loadQuestion(nextQuestion.id);
             }
         }
 
